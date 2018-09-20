@@ -3,6 +3,10 @@ const { GraphQLServer } = require('graphql-yoga')
 
 const resolvers = {
   Query: {
+    findUser(root, args, context) {
+      console.log(args)
+      return context.prisma.user({ id: args.id })
+    },
     publishedPosts(root, args, context) {
       return context.prisma.posts({ where: { published: true } })
     },
