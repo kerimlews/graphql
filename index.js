@@ -1,11 +1,14 @@
 const { prisma } = require('./prisma-client/index')
 const { GraphQLServer } = require('graphql-yoga')
+var jwt = require('jsonwebtoken');
 
 const resolvers = {
   Query: {
+    findUsers(root, args, context) {
+      return context.prisma.users()
+    },
     findUser(root, args, context) {
-      console.log(args)
-      return context.prisma.user({ id: args.id })
+      return context.prisma.users({ where: { id: args.id } })
     },
     publishedPosts(root, args, context) {
       return context.prisma.posts({ where: { published: true } })
@@ -64,11 +67,33 @@ const resolvers = {
   }
 }
 
+function checkToken(token) {
+
+  if (token === null)
+    return false;
+  return true;
+}
+
+async function getUser(token) {
+  if (!checkToken(token))
+    return null;
+
+  return await new Promise(resolve =>
+    jwt.verify(token, 'mysecret', (err, result) => {
+      if (err)
+        resolve(null)
+      else
+        resolve(prisma.users({ where: { id: result.id } }))
+    })
+  );
+}
+
 const server = new GraphQLServer({
     typeDefs: './schema.graphql',
     resolvers,
-    context: { 
-      prisma
-    },
-  })
-  server.start(() => console.log('Server is running on http://localhost:4000'))
+    context: ({ request }) => ({
+      prisma,
+      user: getUser(request.headers.authorization)
+  	})
+})
+server.start(() => console.log('Server is running on http://localhost:4000'))

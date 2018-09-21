@@ -1,6 +1,8 @@
 endpoint: https://eu1.prisma.sh/kerimlews/dfsdfsf/dev
 datamodel: datamodel.prisma
 
+secret: mysecret
+
 generate:
   - generator: javascript-client
     output: ./prisma-client/
@@ -8,3 +10,4 @@ generate:
 hooks:
   post-deploy:
     - prisma generate
+

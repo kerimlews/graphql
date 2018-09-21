@@ -14,18 +14,18 @@ type BatchPayload {
 scalar Long
 
 type Mutation {
-  createPost(data: PostCreateInput!): Post!
-  updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
-  updateManyPosts(data: PostUpdateInput!, where: PostWhereInput): BatchPayload!
-  upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
-  deletePost(where: PostWhereUniqueInput!): Post
-  deleteManyPosts(where: PostWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createPost(data: PostCreateInput!): Post!
+  updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
+  updateManyPosts(data: PostUpdateInput!, where: PostWhereInput): BatchPayload!
+  upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
+  deletePost(where: PostWhereUniqueInput!): Post
+  deleteManyPosts(where: PostWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -189,18 +189,18 @@ input PostWhereUniqueInput {
 }
 
 type Query {
-  post(where: PostWhereUniqueInput!): Post
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
-  postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  post(where: PostWhereUniqueInput!): Post
+  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
+  postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
   node(id: ID!): Node
 }
 
 type Subscription {
-  post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
 }
 
 type User {
