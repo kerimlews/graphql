@@ -7,15 +7,24 @@ type Query {
 }
 
 type Mutation {
-  createUser(name: String!): User
+  login(email: String!, password: String!): AuthPayload
+  registration(username: String!, password: String!, email: String!): AuthPayload
+  createUser(username: String!): User
   createDraft(title: String!, userId: ID!): Post
   publish(postId: ID!): Post
 }
-  
+
+type AuthPayload {
+  token: String!
+  username: String!
+  email: String!
+}
+
 type User {
   id: ID!
-  email: String
-  name: String!
+  email: String!
+  password: String!
+  username: String!
   posts: [Post!]!
 }
 

@@ -1,6 +1,8 @@
 const { prisma } = require('./prisma-client/index')
 const { GraphQLServer } = require('graphql-yoga')
-var jwt = require('jsonwebtoken');
+const { createError } = require('apollo-errors')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt');
 
 const resolvers = {
   Query: {
@@ -23,6 +25,44 @@ const resolvers = {
     }
   },
   Mutation: {
+    async login(root, args, context) {
+      const { email, password } = args;
+      console.log(args)
+      var user = await context.prisma.user({ email })
+      
+      if(user == null)
+        throw new Error('Email is invalid')
+
+      const match = await bcrypt.compareSync(password, user.password);
+      if(!match)
+        throw new Error('Password is invalid')
+      
+      const username = user.username;
+
+      return {
+        username,
+        email,
+        token: jwt.sign({ username, password, exp: 128000 }, 'mysecret')
+      } 
+    },
+    async registration(root, args, context) {
+      const { username, password, email } = args;
+      const emailExist = await context.prisma.user({ email });
+      if (emailExist)
+        throw new Error('Email aready exist')
+
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
+
+      const user = await context.prisma.createUser({ username, password: hash, email })
+
+      return {
+        username,
+        email,
+        token: jwt.sign({ username, password, exp: 128000 }, 'mysecret')
+      } 
+
+    },
     createDraft(root, args, context) {
       return context.prisma.createPost(
         {
@@ -46,8 +86,9 @@ const resolvers = {
       )
     },
     createUser(root, args, context) {
+      console.log(context.user)
       return context.prisma.createUser(
-        { name: args.name },
+        { username: args.username },
       )
     }
   },
@@ -74,14 +115,14 @@ function checkToken(token) {
   return true;
 }
 
-async function getUser(token) {
+function getUser(token) {
   if (!checkToken(token))
     return null;
 
-  return await new Promise(resolve =>
+  return new Promise(resolve =>
     jwt.verify(token, 'mysecret', (err, result) => {
       if (err)
-        resolve(null)
+        throw new Error('User not found')
       else
         resolve(prisma.users({ where: { id: result.id } }))
     })
@@ -96,4 +137,5 @@ const server = new GraphQLServer({
       user: getUser(request.headers.authorization)
   	})
 })
+
 server.start(() => console.log('Server is running on http://localhost:4000'))
