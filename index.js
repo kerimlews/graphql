@@ -6,6 +6,13 @@ const bcrypt = require('bcrypt');
 
 const resolvers = {
   Query: {
+    async checkToken(root, args, context) {
+      const { token } = args;
+
+      var payload = await jwt.verify(token, 'mysecret')
+
+      return payload != null
+    },
     findUsers(root, args, context) {
       return context.prisma.users()
     },
@@ -27,22 +34,22 @@ const resolvers = {
   Mutation: {
     async login(root, args, context) {
       const { email, password } = args;
-      console.log(args)
-      var user = await context.prisma.user({ email })
-      
+
+      var user = await prisma.user({ email })
+
       if(user == null)
-        throw new Error('Email is invalid')
+        return new Error('Email is invalid')
 
       const match = await bcrypt.compareSync(password, user.password);
       if(!match)
-        throw new Error('Password is invalid')
+        return new Error('Password is invalid')
       
       const username = user.username;
 
       return {
         username,
         email,
-        token: jwt.sign({ username, password, exp: 128000 }, 'mysecret')
+        token: jwt.sign({ username, password }, 'mysecret')
       } 
     },
     async registration(root, args, context) {
@@ -54,12 +61,12 @@ const resolvers = {
       var salt = bcrypt.genSaltSync(10);
       var hash = bcrypt.hashSync(password, salt);
 
-      const user = await context.prisma.createUser({ username, password: hash, email })
-
+      await context.prisma.createUser({ username, password: hash, email })
+    
       return {
         username,
         email,
-        token: jwt.sign({ username, password, exp: 128000 }, 'mysecret')
+        token: jwt.sign({ username, password }, 'mysecret')
       } 
 
     },
