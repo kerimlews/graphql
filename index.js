@@ -6,27 +6,23 @@ const bcrypt = require('bcrypt');
 
 const resolvers = {
   Query: {
-    async checkToken(root, args, context) {
-      const { token } = args;
-
-      var payload = await jwt.verify(token, 'mysecret')
-
-      return payload != null
+    checkToken(root, args, context) {
+      return context.user != null
     },
     findUsers(root, args, context) {
-      return context.prisma.users()
+      return prisma.users()
     },
     findUser(root, args, context) {
-      return context.prisma.users({ where: { id: args.id } })
+      return prisma.users({ where: { id: args.id } })
     },
     publishedPosts(root, args, context) {
-      return context.prisma.posts({ where: { published: true } })
+      return prisma.posts({ where: { published: true } })
     },
     post(root, args, context) {
-      return context.prisma.post({ id: args.postId })
+      return prisma.post({ id: args.postId })
     },
     postsByUser(root, args, context) {
-      return context.prisma.user({
+      return prisma.user({
         id: args.userId
       }).posts()
     }
@@ -54,14 +50,14 @@ const resolvers = {
     },
     async registration(root, args, context) {
       const { username, password, email } = args;
-      const emailExist = await context.prisma.user({ email });
+      const emailExist = await prisma.user({ email });
       if (emailExist)
         throw new Error('Email aready exist')
 
       var salt = bcrypt.genSaltSync(10);
       var hash = bcrypt.hashSync(password, salt);
 
-      await context.prisma.createUser({ username, password: hash, email })
+      await prisma.createUser({ username, password: hash, email })
     
       return {
         username,
@@ -71,7 +67,7 @@ const resolvers = {
 
     },
     createDraft(root, args, context) {
-      return context.prisma.createPost(
+      return prisma.createPost(
         {
           data: {
             title: args.title,
@@ -84,7 +80,7 @@ const resolvers = {
       )
     },
     publish(root, args, context) {
-      return context.prisma.updatePost(
+      return prisma.updatePost(
         {
           where: { id: args.postId },
           data: { published: true },
@@ -94,54 +90,48 @@ const resolvers = {
     },
     createUser(root, args, context) {
       console.log(context.user)
-      return context.prisma.createUser(
+      return prisma.createUser(
         { username: args.username },
       )
     }
   },
   User: {
     posts(root, args, context) {
-      return context.prisma.user({
+      return prisma.user({
         id: root.id
       }).posts()
     }
   },
   Post: {
     author(root, args, context) {
-      return context.prisma.post({
+      return prisma.post({
         id: root.id
       }).author()
     }
   }
 }
 
-function checkToken(token) {
+async function getUser(token) {
+  if (token === 'null' || token == null)
+    return null;
+  console.log(token, token == null, typeof token)
 
-  if (token === null)
-    return false;
-  return true;
-}
-
-function getUser(token) {
-  if (!checkToken(token))
+  var result = await jwt.verify(token, 'mysecret');
+  console.log(result)
+  if (result == null)
     return null;
 
-  return new Promise(resolve =>
-    jwt.verify(token, 'mysecret', (err, result) => {
-      if (err)
-        throw new Error('User not found')
-      else
-        resolve(prisma.users({ where: { id: result.id } }))
-    })
-  );
+  var user = prisma.users({ where: { id: result.id } });
+
+  return user;
+    
 }
 
 const server = new GraphQLServer({
     typeDefs: './schema.graphql',
     resolvers,
-    context: ({ request }) => ({
-      prisma,
-      user: getUser(request.headers.authorization)
+    context: async ({ request }) => ({
+      user: await getUser(request.headers.authorization)
   	})
 })
 

@@ -1,7 +1,7 @@
 type Query {
   findUsers: [User!]!
   findUser(id: ID): User
-  checkToken(token: String): Boolean 
+  checkToken: Boolean 
   publishedPosts: [Post!]!
   post(postId: ID!): Post
   postsByUser(userId: ID!): [Post!]!
