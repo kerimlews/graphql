@@ -7,7 +7,11 @@ const bcrypt = require('bcrypt');
 const resolvers = {
   Query: {
     checkToken(root, args, context) {
-      return context.user != null
+      console.log('conext', context.user)
+      if (context.user == null)
+        return null;
+      const { username, email } = context.user;
+      return { username, email };
     },
     findUsers(root, args, context) {
       return prisma.users()
@@ -114,14 +118,12 @@ const resolvers = {
 async function getUser(token) {
   if (token === 'null' || token == null)
     return null;
-  console.log(token, token == null, typeof token)
 
   var result = await jwt.verify(token, 'mysecret');
-  console.log(result)
   if (result == null)
     return null;
 
-  var user = prisma.users({ where: { id: result.id } });
+  var user = await prisma.user({ username: result.username });
 
   return user;
     
