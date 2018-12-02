@@ -15,7 +15,6 @@ type Mutation {
   publish(postId: ID!): Post
 }
 
-
 type AuthPayload {
   token: String!
   username: String!
@@ -23,16 +22,34 @@ type AuthPayload {
 }
 
 type User {
-  id: ID!
-  email: String!
+  id: ID! @unique
+  email: String! @unique
   password: String!
-  username: String!
-  posts: [Post!]!
+  username: String! @unique
+  posts: [Post!]
+  notifications: [Notification!]
+  messages: [Message!]
 }
 
-type Post { 
-  id: ID!
+type Message {
+  id: ID! @unique
+  user: User!
+  user2: Int!
+  createdAt: DateTime!
+  message: String
+}
+
+type Notification {
+  id: ID! @unique
+  type: Int!
+  title: String
+  user: User!
+}
+
+type Post {
+  id: ID! @unique
   title: String!
-  published: Boolean!
-  author: User
+  targets: String
+  published: Boolean! @default(value: "false")
+  author: User!
 }
