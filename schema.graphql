@@ -13,6 +13,12 @@ type Mutation {
   createUser(username: String!): User
   createDraft(title: String!, userId: ID!): Post
   publish(postId: ID!): Post
+  addMessage(user2: Int!, message: String): Message
+}
+
+type Subscription {
+  postAdded: Post
+  addMessage: Message
 }
 
 type AuthPayload {
@@ -22,34 +28,34 @@ type AuthPayload {
 }
 
 type User {
-  id: ID! @unique
-  email: String! @unique
+  id: ID!
+  email: String!
   password: String!
-  username: String! @unique
+  username: String!
   posts: [Post!]
   notifications: [Notification!]
   messages: [Message!]
 }
 
 type Message {
-  id: ID! @unique
+  id: ID!
   user: User!
   user2: Int!
-  createdAt: DateTime!
+  createdAt: String!
   message: String
 }
 
 type Notification {
-  id: ID! @unique
+  id: ID!
   type: Int!
   title: String
   user: User!
 }
 
 type Post {
-  id: ID! @unique
+  id: ID!
   title: String!
   targets: String
-  published: Boolean! @default(value: "false")
+  published: Boolean!
   author: User!
 }

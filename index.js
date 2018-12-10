@@ -1,8 +1,12 @@
 const { prisma } = require('./prisma-client/index')
-const { GraphQLServer } = require('graphql-yoga')
+const { GraphQLServer, PubSub } = require('graphql-yoga')
 const { createError } = require('apollo-errors')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+
+const pubsub = new PubSub();
+
+const MESSAGE_ADDED = 'MESSAGE_ADDED';
 
 const resolvers = {
   Query: {
@@ -31,7 +35,23 @@ const resolvers = {
       }).posts()
     }
   },
+  Subscription: {
+    addMeesage: {
+      subscribe: () => pubsub.asyncIterator([MESSAGE_ADDED])
+      }
+  },
   Mutation: {
+    async addMessage(root, args, context) {
+      const { message, user2 } = args;
+      var message = {
+        message,
+        user2,
+        user: context.user,
+        createdAt: new Date()
+      }
+      pubsub.publish(MESSAGE_ADDED, message);
+      await prisma.createMessage(message)
+    },
     async login(root, args, context) {
       const { email, password } = args;
 
@@ -132,9 +152,13 @@ async function getUser(token) {
 const server = new GraphQLServer({
     typeDefs: './schema.graphql',
     resolvers,
-    context: async ({ request }) => ({
-      user: await getUser(request.headers.authorization)
-  	})
+    context: async ({ request, connection }) => {
+      if (connection) {
+        return connection.context;
+      } else {
+       return { user: await getUser(null) }
+  	}
+  }
 })
 
 server.start(() => console.log('Server is running on http://localhost:4000'))
