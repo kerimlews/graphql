@@ -5,6 +5,10 @@ var typeDefs = require("./prisma-schema").typeDefs;
 
 var models = [
   {
+    name: "Group",
+    embedded: false
+  },
+  {
     name: "Message",
     embedded: false
   },
@@ -18,6 +22,10 @@ var models = [
   },
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "UserGroup",
     embedded: false
   }
 ];

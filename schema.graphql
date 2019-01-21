@@ -13,12 +13,13 @@ type Mutation {
   createUser(username: String!): User
   createDraft(title: String!, userId: ID!): Post
   publish(postId: ID!): Post
-  addMessage(user2: Int!, message: String): Message
+  addMessage(user2: String!, message: String): Message!
+  getMessages(page: Int!, search: String): [Message!]
 }
 
 type Subscription {
   postAdded: Post
-  addMessage: Message
+  addMessage: Message!
 }
 
 type AuthPayload {
@@ -29,20 +30,35 @@ type AuthPayload {
 
 type User {
   id: ID!
-  email: String!
+  email: String! 
   password: String!
   username: String!
   posts: [Post!]
   notifications: [Notification!]
-  messages: [Message!]
+  sentMessages: [Message!]!
+  receivedMessages: [Message!]!
+  groups: [Group!]!
 }
 
 type Message {
   id: ID!
   user: User!
-  user2: Int!
-  createdAt: String!
+  user2: User!
   message: String
+  attached: [String!]
+  isSeen: Boolean!
+}
+
+type UserGroup {
+  user: User!
+  group: Group!
+}
+
+type Group {
+  id: ID! 
+  user: User!
+  users: [UserGroup!]
+  name: String
 }
 
 type Notification {
@@ -56,6 +72,6 @@ type Post {
   id: ID!
   title: String!
   targets: String
-  published: Boolean!
+  published: Boolean
   author: User!
 }

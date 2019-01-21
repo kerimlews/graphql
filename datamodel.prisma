@@ -6,14 +6,28 @@ type User {
   posts: [Post!]
   notifications: [Notification!]
   messages: [Message!]
+  groups: [Group!]!
 }
 
 type Message {
   id: ID! @unique
   user: User!
-  user2: Int!
-  createdAt: DateTime!
+  user2: [User!]
   message: String
+  attached: [String!]
+  isSeen: Boolean! @default(value: "false")
+}
+
+type UserGroup {
+  user: User!
+  group: Group!
+}
+
+type Group {
+  id: ID! @unique
+  user: User!
+  users: [UserGroup!]
+  name: String
 }
 
 type Notification {

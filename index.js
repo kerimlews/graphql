@@ -36,21 +36,69 @@ const resolvers = {
     }
   },
   Subscription: {
-    addMeesage: {
-      subscribe: () => pubsub.asyncIterator([MESSAGE_ADDED])
+    addMessage: {
+        subscribe: async (parent, args, ctx, info) => prisma.$subscribe.message({
+          where: {
+            mutation_in: ['CREATED', 'UPDATED']
+          },
+        }, info).node(),
+        resolve: payload => payload
       }
   },
   Mutation: {
     async addMessage(root, args, context) {
+
+      if(context.user == null)
+        throw new Error("User not found");
+      
       const { message, user2 } = args;
-      var message = {
+
+      var msg = {
         message,
-        user2,
-        user: context.user,
-        createdAt: new Date()
+        user2:  { connect: { id: user2 } },
+        user: { connect: { id: context.user.id } }
       }
-      pubsub.publish(MESSAGE_ADDED, message);
-      await prisma.createMessage(message)
+   
+      const result = await prisma.createMessage(msg).user2();
+      
+      return result;
+
+    },
+    async getConversations(root, args, context) {
+
+      if(context.user == null)
+        throw new Error("User not found");
+      
+      const { page, search } = args;
+
+      var query = {
+        first: 10,
+        skip: ( page - 1 ) * 10
+      }
+
+      if (search != null)
+        query = { ...query, where: {}  };
+   
+      const result = await prisma.user(query).;
+      
+      return result;
+
+    },
+    async getMessage(root, args, context) {
+
+      if(context.user == null)
+        throw new Error("User not found");
+      
+      const { user2 } = args;
+
+      var query = {
+        user2
+      }
+
+      const result = await prisma.message().user2(query);
+      
+      return result;
+
     },
     async login(root, args, context) {
       const { email, password } = args;
@@ -78,8 +126,8 @@ const resolvers = {
       if (emailExist)
         throw new Error('Email aready exist')
 
-      var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync(password, salt);
+      var salt = await bcrypt.genSaltSync(10);
+      var hash = await bcrypt.hashSync(password, salt);
 
       await prisma.createUser({ username, password: hash, email })
     
@@ -140,25 +188,21 @@ async function getUser(token) {
     return null;
 
   var result = await jwt.verify(token, 'mysecret');
+
   if (result == null)
     return null;
 
   var user = await prisma.user({ username: result.username });
 
   return user;
-    
 }
 
 const server = new GraphQLServer({
     typeDefs: './schema.graphql',
     resolvers,
-    context: async ({ request, connection }) => {
-      if (connection) {
-        return connection.context;
-      } else {
-       return { user: await getUser(null) }
-  	}
-  }
+    context: async ({ request, connection }) => ({
+       user: connection ? null : await getUser(request.headers.authorization)
+  	})
 })
 
 server.start(() => console.log('Server is running on http://localhost:4000'))

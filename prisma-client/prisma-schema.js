@@ -1,5 +1,9 @@
 module.exports = {
-        typeDefs: /* GraphQL */ `type AggregateMessage {
+        typeDefs: /* GraphQL */ `type AggregateGroup {
+  count: Int!
+}
+
+type AggregateMessage {
   count: Int!
 }
 
@@ -15,20 +19,223 @@ type AggregateUser {
   count: Int!
 }
 
+type AggregateUserGroup {
+  count: Int!
+}
+
 type BatchPayload {
   count: Long!
 }
 
-scalar DateTime
+type Group {
+  id: ID!
+  user: User!
+  users(where: UserGroupWhereInput, orderBy: UserGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserGroup!]
+  name: String
+}
+
+type GroupConnection {
+  pageInfo: PageInfo!
+  edges: [GroupEdge]!
+  aggregate: AggregateGroup!
+}
+
+input GroupCreateInput {
+  user: UserCreateOneWithoutGroupsInput!
+  users: UserGroupCreateManyWithoutGroupInput
+  name: String
+}
+
+input GroupCreateManyWithoutUserInput {
+  create: [GroupCreateWithoutUserInput!]
+  connect: [GroupWhereUniqueInput!]
+}
+
+input GroupCreateOneWithoutUsersInput {
+  create: GroupCreateWithoutUsersInput
+  connect: GroupWhereUniqueInput
+}
+
+input GroupCreateWithoutUserInput {
+  users: UserGroupCreateManyWithoutGroupInput
+  name: String
+}
+
+input GroupCreateWithoutUsersInput {
+  user: UserCreateOneWithoutGroupsInput!
+  name: String
+}
+
+type GroupEdge {
+  node: Group!
+  cursor: String!
+}
+
+enum GroupOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type GroupPreviousValues {
+  id: ID!
+  name: String
+}
+
+input GroupScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [GroupScalarWhereInput!]
+  OR: [GroupScalarWhereInput!]
+  NOT: [GroupScalarWhereInput!]
+}
+
+type GroupSubscriptionPayload {
+  mutation: MutationType!
+  node: Group
+  updatedFields: [String!]
+  previousValues: GroupPreviousValues
+}
+
+input GroupSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: GroupWhereInput
+  AND: [GroupSubscriptionWhereInput!]
+  OR: [GroupSubscriptionWhereInput!]
+  NOT: [GroupSubscriptionWhereInput!]
+}
+
+input GroupUpdateInput {
+  user: UserUpdateOneRequiredWithoutGroupsInput
+  users: UserGroupUpdateManyWithoutGroupInput
+  name: String
+}
+
+input GroupUpdateManyDataInput {
+  name: String
+}
+
+input GroupUpdateManyMutationInput {
+  name: String
+}
+
+input GroupUpdateManyWithoutUserInput {
+  create: [GroupCreateWithoutUserInput!]
+  delete: [GroupWhereUniqueInput!]
+  connect: [GroupWhereUniqueInput!]
+  disconnect: [GroupWhereUniqueInput!]
+  update: [GroupUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [GroupUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [GroupScalarWhereInput!]
+  updateMany: [GroupUpdateManyWithWhereNestedInput!]
+}
+
+input GroupUpdateManyWithWhereNestedInput {
+  where: GroupScalarWhereInput!
+  data: GroupUpdateManyDataInput!
+}
+
+input GroupUpdateWithoutUserDataInput {
+  users: UserGroupUpdateManyWithoutGroupInput
+  name: String
+}
+
+input GroupUpdateWithWhereUniqueWithoutUserInput {
+  where: GroupWhereUniqueInput!
+  data: GroupUpdateWithoutUserDataInput!
+}
+
+input GroupUpsertWithWhereUniqueWithoutUserInput {
+  where: GroupWhereUniqueInput!
+  update: GroupUpdateWithoutUserDataInput!
+  create: GroupCreateWithoutUserInput!
+}
+
+input GroupWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  user: UserWhereInput
+  users_every: UserGroupWhereInput
+  users_some: UserGroupWhereInput
+  users_none: UserGroupWhereInput
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [GroupWhereInput!]
+  OR: [GroupWhereInput!]
+  NOT: [GroupWhereInput!]
+}
+
+input GroupWhereUniqueInput {
+  id: ID
+}
 
 scalar Long
 
 type Message {
   id: ID!
   user: User!
-  user2: Int!
-  createdAt: DateTime!
+  user2: User!
   message: String
+  attached: [String!]!
+  isSeen: Boolean!
 }
 
 type MessageConnection {
@@ -37,10 +244,21 @@ type MessageConnection {
   aggregate: AggregateMessage!
 }
 
+input MessageCreateattachedInput {
+  set: [String!]
+}
+
 input MessageCreateInput {
-  user: UserCreateOneWithoutMessagesInput!
-  user2: Int!
+  user: UserCreateOneWithoutSentMessagesInput!
+  user2: UserCreateOneWithoutReceivedMessagesInput!
   message: String
+  attached: MessageCreateattachedInput
+  isSeen: Boolean
+}
+
+input MessageCreateManyWithoutUser2Input {
+  create: [MessageCreateWithoutUser2Input!]
+  connect: [MessageWhereUniqueInput!]
 }
 
 input MessageCreateManyWithoutUserInput {
@@ -48,9 +266,18 @@ input MessageCreateManyWithoutUserInput {
   connect: [MessageWhereUniqueInput!]
 }
 
-input MessageCreateWithoutUserInput {
-  user2: Int!
+input MessageCreateWithoutUser2Input {
+  user: UserCreateOneWithoutSentMessagesInput!
   message: String
+  attached: MessageCreateattachedInput
+  isSeen: Boolean
+}
+
+input MessageCreateWithoutUserInput {
+  user2: UserCreateOneWithoutReceivedMessagesInput!
+  message: String
+  attached: MessageCreateattachedInput
+  isSeen: Boolean
 }
 
 type MessageEdge {
@@ -61,21 +288,57 @@ type MessageEdge {
 enum MessageOrderByInput {
   id_ASC
   id_DESC
-  user2_ASC
-  user2_DESC
-  createdAt_ASC
-  createdAt_DESC
   message_ASC
   message_DESC
+  isSeen_ASC
+  isSeen_DESC
+  createdAt_ASC
+  createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
 
 type MessagePreviousValues {
   id: ID!
-  user2: Int!
-  createdAt: DateTime!
   message: String
+  attached: [String!]!
+  isSeen: Boolean!
+}
+
+input MessageScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  message: String
+  message_not: String
+  message_in: [String!]
+  message_not_in: [String!]
+  message_lt: String
+  message_lte: String
+  message_gt: String
+  message_gte: String
+  message_contains: String
+  message_not_contains: String
+  message_starts_with: String
+  message_not_starts_with: String
+  message_ends_with: String
+  message_not_ends_with: String
+  isSeen: Boolean
+  isSeen_not: Boolean
+  AND: [MessageScalarWhereInput!]
+  OR: [MessageScalarWhereInput!]
+  NOT: [MessageScalarWhereInput!]
 }
 
 type MessageSubscriptionPayload {
@@ -96,15 +359,39 @@ input MessageSubscriptionWhereInput {
   NOT: [MessageSubscriptionWhereInput!]
 }
 
+input MessageUpdateattachedInput {
+  set: [String!]
+}
+
 input MessageUpdateInput {
-  user: UserUpdateOneRequiredWithoutMessagesInput
-  user2: Int
+  user: UserUpdateOneRequiredWithoutSentMessagesInput
+  user2: UserUpdateOneRequiredWithoutReceivedMessagesInput
   message: String
+  attached: MessageUpdateattachedInput
+  isSeen: Boolean
+}
+
+input MessageUpdateManyDataInput {
+  message: String
+  attached: MessageUpdateattachedInput
+  isSeen: Boolean
 }
 
 input MessageUpdateManyMutationInput {
-  user2: Int
   message: String
+  attached: MessageUpdateattachedInput
+  isSeen: Boolean
+}
+
+input MessageUpdateManyWithoutUser2Input {
+  create: [MessageCreateWithoutUser2Input!]
+  delete: [MessageWhereUniqueInput!]
+  connect: [MessageWhereUniqueInput!]
+  disconnect: [MessageWhereUniqueInput!]
+  update: [MessageUpdateWithWhereUniqueWithoutUser2Input!]
+  upsert: [MessageUpsertWithWhereUniqueWithoutUser2Input!]
+  deleteMany: [MessageScalarWhereInput!]
+  updateMany: [MessageUpdateManyWithWhereNestedInput!]
 }
 
 input MessageUpdateManyWithoutUserInput {
@@ -114,16 +401,43 @@ input MessageUpdateManyWithoutUserInput {
   disconnect: [MessageWhereUniqueInput!]
   update: [MessageUpdateWithWhereUniqueWithoutUserInput!]
   upsert: [MessageUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [MessageScalarWhereInput!]
+  updateMany: [MessageUpdateManyWithWhereNestedInput!]
+}
+
+input MessageUpdateManyWithWhereNestedInput {
+  where: MessageScalarWhereInput!
+  data: MessageUpdateManyDataInput!
+}
+
+input MessageUpdateWithoutUser2DataInput {
+  user: UserUpdateOneRequiredWithoutSentMessagesInput
+  message: String
+  attached: MessageUpdateattachedInput
+  isSeen: Boolean
 }
 
 input MessageUpdateWithoutUserDataInput {
-  user2: Int
+  user2: UserUpdateOneRequiredWithoutReceivedMessagesInput
   message: String
+  attached: MessageUpdateattachedInput
+  isSeen: Boolean
+}
+
+input MessageUpdateWithWhereUniqueWithoutUser2Input {
+  where: MessageWhereUniqueInput!
+  data: MessageUpdateWithoutUser2DataInput!
 }
 
 input MessageUpdateWithWhereUniqueWithoutUserInput {
   where: MessageWhereUniqueInput!
   data: MessageUpdateWithoutUserDataInput!
+}
+
+input MessageUpsertWithWhereUniqueWithoutUser2Input {
+  where: MessageWhereUniqueInput!
+  update: MessageUpdateWithoutUser2DataInput!
+  create: MessageCreateWithoutUser2Input!
 }
 
 input MessageUpsertWithWhereUniqueWithoutUserInput {
@@ -148,22 +462,7 @@ input MessageWhereInput {
   id_ends_with: ID
   id_not_ends_with: ID
   user: UserWhereInput
-  user2: Int
-  user2_not: Int
-  user2_in: [Int!]
-  user2_not_in: [Int!]
-  user2_lt: Int
-  user2_lte: Int
-  user2_gt: Int
-  user2_gte: Int
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
+  user2: UserWhereInput
   message: String
   message_not: String
   message_in: [String!]
@@ -178,6 +477,8 @@ input MessageWhereInput {
   message_not_starts_with: String
   message_ends_with: String
   message_not_ends_with: String
+  isSeen: Boolean
+  isSeen_not: Boolean
   AND: [MessageWhereInput!]
   OR: [MessageWhereInput!]
   NOT: [MessageWhereInput!]
@@ -188,6 +489,12 @@ input MessageWhereUniqueInput {
 }
 
 type Mutation {
+  createGroup(data: GroupCreateInput!): Group!
+  updateGroup(data: GroupUpdateInput!, where: GroupWhereUniqueInput!): Group
+  updateManyGroups(data: GroupUpdateManyMutationInput!, where: GroupWhereInput): BatchPayload!
+  upsertGroup(where: GroupWhereUniqueInput!, create: GroupCreateInput!, update: GroupUpdateInput!): Group!
+  deleteGroup(where: GroupWhereUniqueInput!): Group
+  deleteManyGroups(where: GroupWhereInput): BatchPayload!
   createMessage(data: MessageCreateInput!): Message!
   updateMessage(data: MessageUpdateInput!, where: MessageWhereUniqueInput!): Message
   updateManyMessages(data: MessageUpdateManyMutationInput!, where: MessageWhereInput): BatchPayload!
@@ -212,6 +519,8 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createUserGroup(data: UserGroupCreateInput!): UserGroup!
+  deleteManyUserGroups(where: UserGroupWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -277,6 +586,48 @@ type NotificationPreviousValues {
   title: String
 }
 
+input NotificationScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  type: Int
+  type_not: Int
+  type_in: [Int!]
+  type_not_in: [Int!]
+  type_lt: Int
+  type_lte: Int
+  type_gt: Int
+  type_gte: Int
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  AND: [NotificationScalarWhereInput!]
+  OR: [NotificationScalarWhereInput!]
+  NOT: [NotificationScalarWhereInput!]
+}
+
 type NotificationSubscriptionPayload {
   mutation: MutationType!
   node: Notification
@@ -301,6 +652,11 @@ input NotificationUpdateInput {
   user: UserUpdateOneRequiredWithoutNotificationsInput
 }
 
+input NotificationUpdateManyDataInput {
+  type: Int
+  title: String
+}
+
 input NotificationUpdateManyMutationInput {
   type: Int
   title: String
@@ -313,6 +669,13 @@ input NotificationUpdateManyWithoutUserInput {
   disconnect: [NotificationWhereUniqueInput!]
   update: [NotificationUpdateWithWhereUniqueWithoutUserInput!]
   upsert: [NotificationUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [NotificationScalarWhereInput!]
+  updateMany: [NotificationUpdateManyWithWhereNestedInput!]
+}
+
+input NotificationUpdateManyWithWhereNestedInput {
+  where: NotificationScalarWhereInput!
+  data: NotificationUpdateManyDataInput!
 }
 
 input NotificationUpdateWithoutUserDataInput {
@@ -444,6 +807,56 @@ type PostPreviousValues {
   published: Boolean!
 }
 
+input PostScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  targets: String
+  targets_not: String
+  targets_in: [String!]
+  targets_not_in: [String!]
+  targets_lt: String
+  targets_lte: String
+  targets_gt: String
+  targets_gte: String
+  targets_contains: String
+  targets_not_contains: String
+  targets_starts_with: String
+  targets_not_starts_with: String
+  targets_ends_with: String
+  targets_not_ends_with: String
+  published: Boolean
+  published_not: Boolean
+  AND: [PostScalarWhereInput!]
+  OR: [PostScalarWhereInput!]
+  NOT: [PostScalarWhereInput!]
+}
+
 type PostSubscriptionPayload {
   mutation: MutationType!
   node: Post
@@ -469,6 +882,12 @@ input PostUpdateInput {
   author: UserUpdateOneRequiredWithoutPostsInput
 }
 
+input PostUpdateManyDataInput {
+  title: String
+  targets: String
+  published: Boolean
+}
+
 input PostUpdateManyMutationInput {
   title: String
   targets: String
@@ -482,6 +901,13 @@ input PostUpdateManyWithoutAuthorInput {
   disconnect: [PostWhereUniqueInput!]
   update: [PostUpdateWithWhereUniqueWithoutAuthorInput!]
   upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
+  deleteMany: [PostScalarWhereInput!]
+  updateMany: [PostUpdateManyWithWhereNestedInput!]
+}
+
+input PostUpdateManyWithWhereNestedInput {
+  where: PostScalarWhereInput!
+  data: PostUpdateManyDataInput!
 }
 
 input PostUpdateWithoutAuthorDataInput {
@@ -557,6 +983,9 @@ input PostWhereUniqueInput {
 }
 
 type Query {
+  group(where: GroupWhereUniqueInput!): Group
+  groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group]!
+  groupsConnection(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GroupConnection!
   message(where: MessageWhereUniqueInput!): Message
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message]!
   messagesConnection(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): MessageConnection!
@@ -569,14 +998,18 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  userGroups(where: UserGroupWhereInput, orderBy: UserGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserGroup]!
+  userGroupsConnection(where: UserGroupWhereInput, orderBy: UserGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserGroupConnection!
   node(id: ID!): Node
 }
 
 type Subscription {
+  group(where: GroupSubscriptionWhereInput): GroupSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
   notification(where: NotificationSubscriptionWhereInput): NotificationSubscriptionPayload
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  userGroup(where: UserGroupSubscriptionWhereInput): UserGroupSubscriptionPayload
 }
 
 type User {
@@ -586,7 +1019,9 @@ type User {
   username: String!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification!]
-  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  sentMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  receivedMessages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group!]
 }
 
 type UserConnection {
@@ -601,11 +1036,18 @@ input UserCreateInput {
   username: String!
   posts: PostCreateManyWithoutAuthorInput
   notifications: NotificationCreateManyWithoutUserInput
-  messages: MessageCreateManyWithoutUserInput
+  sentMessages: MessageCreateManyWithoutUserInput
+  receivedMessages: MessageCreateManyWithoutUser2Input
+  groups: GroupCreateManyWithoutUserInput
 }
 
-input UserCreateOneWithoutMessagesInput {
-  create: UserCreateWithoutMessagesInput
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutGroupsInput {
+  create: UserCreateWithoutGroupsInput
   connect: UserWhereUniqueInput
 }
 
@@ -619,12 +1061,24 @@ input UserCreateOneWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutMessagesInput {
+input UserCreateOneWithoutReceivedMessagesInput {
+  create: UserCreateWithoutReceivedMessagesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutSentMessagesInput {
+  create: UserCreateWithoutSentMessagesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutGroupsInput {
   email: String!
   password: String!
   username: String!
   posts: PostCreateManyWithoutAuthorInput
   notifications: NotificationCreateManyWithoutUserInput
+  sentMessages: MessageCreateManyWithoutUserInput
+  receivedMessages: MessageCreateManyWithoutUser2Input
 }
 
 input UserCreateWithoutNotificationsInput {
@@ -632,7 +1086,9 @@ input UserCreateWithoutNotificationsInput {
   password: String!
   username: String!
   posts: PostCreateManyWithoutAuthorInput
-  messages: MessageCreateManyWithoutUserInput
+  sentMessages: MessageCreateManyWithoutUserInput
+  receivedMessages: MessageCreateManyWithoutUser2Input
+  groups: GroupCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutPostsInput {
@@ -640,12 +1096,101 @@ input UserCreateWithoutPostsInput {
   password: String!
   username: String!
   notifications: NotificationCreateManyWithoutUserInput
-  messages: MessageCreateManyWithoutUserInput
+  sentMessages: MessageCreateManyWithoutUserInput
+  receivedMessages: MessageCreateManyWithoutUser2Input
+  groups: GroupCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutReceivedMessagesInput {
+  email: String!
+  password: String!
+  username: String!
+  posts: PostCreateManyWithoutAuthorInput
+  notifications: NotificationCreateManyWithoutUserInput
+  sentMessages: MessageCreateManyWithoutUserInput
+  groups: GroupCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutSentMessagesInput {
+  email: String!
+  password: String!
+  username: String!
+  posts: PostCreateManyWithoutAuthorInput
+  notifications: NotificationCreateManyWithoutUserInput
+  receivedMessages: MessageCreateManyWithoutUser2Input
+  groups: GroupCreateManyWithoutUserInput
 }
 
 type UserEdge {
   node: User!
   cursor: String!
+}
+
+type UserGroup {
+  user: User!
+  group: Group!
+}
+
+type UserGroupConnection {
+  pageInfo: PageInfo!
+  edges: [UserGroupEdge]!
+  aggregate: AggregateUserGroup!
+}
+
+input UserGroupCreateInput {
+  user: UserCreateOneInput!
+  group: GroupCreateOneWithoutUsersInput!
+}
+
+input UserGroupCreateManyWithoutGroupInput {
+  create: [UserGroupCreateWithoutGroupInput!]
+}
+
+input UserGroupCreateWithoutGroupInput {
+  user: UserCreateOneInput!
+}
+
+type UserGroupEdge {
+  node: UserGroup!
+  cursor: String!
+}
+
+enum UserGroupOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type UserGroupSubscriptionPayload {
+  mutation: MutationType!
+  node: UserGroup
+  updatedFields: [String!]
+}
+
+input UserGroupSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserGroupWhereInput
+  AND: [UserGroupSubscriptionWhereInput!]
+  OR: [UserGroupSubscriptionWhereInput!]
+  NOT: [UserGroupSubscriptionWhereInput!]
+}
+
+input UserGroupUpdateManyWithoutGroupInput {
+  create: [UserGroupCreateWithoutGroupInput!]
+}
+
+input UserGroupWhereInput {
+  user: UserWhereInput
+  group: GroupWhereInput
+  AND: [UserGroupWhereInput!]
+  OR: [UserGroupWhereInput!]
+  NOT: [UserGroupWhereInput!]
 }
 
 enum UserOrderByInput {
@@ -694,7 +1239,9 @@ input UserUpdateInput {
   username: String
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
-  messages: MessageUpdateManyWithoutUserInput
+  sentMessages: MessageUpdateManyWithoutUserInput
+  receivedMessages: MessageUpdateManyWithoutUser2Input
+  groups: GroupUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
@@ -703,10 +1250,10 @@ input UserUpdateManyMutationInput {
   username: String
 }
 
-input UserUpdateOneRequiredWithoutMessagesInput {
-  create: UserCreateWithoutMessagesInput
-  update: UserUpdateWithoutMessagesDataInput
-  upsert: UserUpsertWithoutMessagesInput
+input UserUpdateOneRequiredWithoutGroupsInput {
+  create: UserCreateWithoutGroupsInput
+  update: UserUpdateWithoutGroupsDataInput
+  upsert: UserUpsertWithoutGroupsInput
   connect: UserWhereUniqueInput
 }
 
@@ -724,12 +1271,28 @@ input UserUpdateOneRequiredWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateWithoutMessagesDataInput {
+input UserUpdateOneRequiredWithoutReceivedMessagesInput {
+  create: UserCreateWithoutReceivedMessagesInput
+  update: UserUpdateWithoutReceivedMessagesDataInput
+  upsert: UserUpsertWithoutReceivedMessagesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneRequiredWithoutSentMessagesInput {
+  create: UserCreateWithoutSentMessagesInput
+  update: UserUpdateWithoutSentMessagesDataInput
+  upsert: UserUpsertWithoutSentMessagesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutGroupsDataInput {
   email: String
   password: String
   username: String
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
+  sentMessages: MessageUpdateManyWithoutUserInput
+  receivedMessages: MessageUpdateManyWithoutUser2Input
 }
 
 input UserUpdateWithoutNotificationsDataInput {
@@ -737,7 +1300,9 @@ input UserUpdateWithoutNotificationsDataInput {
   password: String
   username: String
   posts: PostUpdateManyWithoutAuthorInput
-  messages: MessageUpdateManyWithoutUserInput
+  sentMessages: MessageUpdateManyWithoutUserInput
+  receivedMessages: MessageUpdateManyWithoutUser2Input
+  groups: GroupUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutPostsDataInput {
@@ -745,12 +1310,34 @@ input UserUpdateWithoutPostsDataInput {
   password: String
   username: String
   notifications: NotificationUpdateManyWithoutUserInput
-  messages: MessageUpdateManyWithoutUserInput
+  sentMessages: MessageUpdateManyWithoutUserInput
+  receivedMessages: MessageUpdateManyWithoutUser2Input
+  groups: GroupUpdateManyWithoutUserInput
 }
 
-input UserUpsertWithoutMessagesInput {
-  update: UserUpdateWithoutMessagesDataInput!
-  create: UserCreateWithoutMessagesInput!
+input UserUpdateWithoutReceivedMessagesDataInput {
+  email: String
+  password: String
+  username: String
+  posts: PostUpdateManyWithoutAuthorInput
+  notifications: NotificationUpdateManyWithoutUserInput
+  sentMessages: MessageUpdateManyWithoutUserInput
+  groups: GroupUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutSentMessagesDataInput {
+  email: String
+  password: String
+  username: String
+  posts: PostUpdateManyWithoutAuthorInput
+  notifications: NotificationUpdateManyWithoutUserInput
+  receivedMessages: MessageUpdateManyWithoutUser2Input
+  groups: GroupUpdateManyWithoutUserInput
+}
+
+input UserUpsertWithoutGroupsInput {
+  update: UserUpdateWithoutGroupsDataInput!
+  create: UserCreateWithoutGroupsInput!
 }
 
 input UserUpsertWithoutNotificationsInput {
@@ -761,6 +1348,16 @@ input UserUpsertWithoutNotificationsInput {
 input UserUpsertWithoutPostsInput {
   update: UserUpdateWithoutPostsDataInput!
   create: UserCreateWithoutPostsInput!
+}
+
+input UserUpsertWithoutReceivedMessagesInput {
+  update: UserUpdateWithoutReceivedMessagesDataInput!
+  create: UserCreateWithoutReceivedMessagesInput!
+}
+
+input UserUpsertWithoutSentMessagesInput {
+  update: UserUpdateWithoutSentMessagesDataInput!
+  create: UserCreateWithoutSentMessagesInput!
 }
 
 input UserWhereInput {
@@ -826,9 +1423,15 @@ input UserWhereInput {
   notifications_every: NotificationWhereInput
   notifications_some: NotificationWhereInput
   notifications_none: NotificationWhereInput
-  messages_every: MessageWhereInput
-  messages_some: MessageWhereInput
-  messages_none: MessageWhereInput
+  sentMessages_every: MessageWhereInput
+  sentMessages_some: MessageWhereInput
+  sentMessages_none: MessageWhereInput
+  receivedMessages_every: MessageWhereInput
+  receivedMessages_some: MessageWhereInput
+  receivedMessages_none: MessageWhereInput
+  groups_every: GroupWhereInput
+  groups_some: GroupWhereInput
+  groups_none: GroupWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
