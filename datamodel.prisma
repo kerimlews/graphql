@@ -9,6 +9,11 @@ type User {
   groups: [Group!]!
 }
 
+type User2 {
+    id: ID! @unique
+    user: User!
+}
+
 type Message {
   id: ID! @unique
   user: User!
@@ -16,18 +21,34 @@ type Message {
   message: String
   attached: [String!]
   isSeen: Boolean! @default(value: "false")
+  isDeleted: Boolean! @default(value: "false")
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
-type UserGroup {
-  user: User!
-  group: Group!
+type Conversation {
+   id: ID! @unique
+   user: User!
+   group: Group
+   user2: User2
+   message: [Message!]
+   startedAt: DateTime!
+   createdAt: DateTime!
 }
 
 type Group {
   id: ID! @unique
-  user: User!
-  users: [UserGroup!]
   name: String
+  conversation: [Conversation!]
+}
+
+type GroupMessage {
+  id: ID! @unique
+  user: User!
+  message: String
+  attached: [String!]
+  seen: Int! @default(value: "0")
+  isDeleted: Boolean! @default(value: "false")
 }
 
 type Notification {
