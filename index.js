@@ -33,7 +33,29 @@ const resolvers = {
       return prisma.user({
         id: args.userId
       }).posts()
-    }
+    },
+    async getConversations(root, args, context) {
+
+      if(context.user == null)
+        throw new Error("User not found");
+      
+      const { page, search } = args;
+
+      var query = {
+        first: 10,
+        skip: ( page - 1 ) * 10
+      }
+
+      if (search != null)
+        query = { ...query, where: { 
+
+         }  };
+   
+      const result = await prisma.conversations(query);
+      
+      return result;
+
+    },
   },
   Subscription: {
     addMessage: {
@@ -60,26 +82,6 @@ const resolvers = {
       }
    
       const result = await prisma.createMessage(msg).user2();
-      
-      return result;
-
-    },
-    async getConversations(root, args, context) {
-
-      if(context.user == null)
-        throw new Error("User not found");
-      
-      const { page, search } = args;
-
-      var query = {
-        first: 10,
-        skip: ( page - 1 ) * 10
-      }
-
-      if (search != null)
-        query = { ...query, where: {}  };
-   
-      const result = await prisma.user(query).;
       
       return result;
 

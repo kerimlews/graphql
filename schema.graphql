@@ -5,6 +5,8 @@ type Query {
   publishedPosts: [Post!]!
   post(postId: ID!): Post
   postsByUser(userId: ID!): [Post!]!
+
+  getConversations(page: Int!, search: String): [ConversationModel!]
 }
 
 type Mutation {
@@ -14,7 +16,15 @@ type Mutation {
   createDraft(title: String!, userId: ID!): Post
   publish(postId: ID!): Post
   addMessage(user2: String!, message: String): Message!
-  getMessages(page: Int!, search: String): [Message!]
+}
+
+type ConversationModel {
+  id: Int!
+  name: String!
+  message: String
+  startedAt: DateTime!
+  logo: String
+  isActive: Boolean!
 }
 
 type Subscription {
@@ -33,32 +43,45 @@ type User {
   email: String! 
   password: String!
   username: String!
+  isActive: Boolean
   posts: [Post!]
   notifications: [Notification!]
-  sentMessages: [Message!]!
-  receivedMessages: [Message!]!
+  messages: [Message!]
   groups: [Group!]!
+  user2: [User2!]
+}
+
+type User2 {
+    id: ID!
+    user: User!
 }
 
 type Message {
   id: ID!
   user: User!
-  user2: User!
+  user2: User2!
   message: String
   attached: [String!]
   isSeen: Boolean!
+  isDeleted: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
-type UserGroup {
-  user: User!
-  group: Group!
+type Conversation {
+   id: ID!
+   user: User!
+   group: Group
+   user2: User2
+   message: [Message!]
+   startedAt: DateTime!
+   createdAt: DateTime!
 }
 
 type Group {
-  id: ID! 
-  user: User!
-  users: [UserGroup!]
+  id: ID!
   name: String
+  conversation: [Conversation!]
 }
 
 type Notification {
