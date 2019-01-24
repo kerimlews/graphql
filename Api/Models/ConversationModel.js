@@ -7,13 +7,25 @@ export default class ConversationModel {
           this.isActive = result.isActive;
       }
 
+      static mapConversation(model) {
+        return {
+            id: model.id,
+            startedAt: model.startedAt,
+            message: model.message.message,
+            isSeen: model.message.isSeen,
+            isDeleted: model.message.isDeleted,
+            createdAt: model.message.createdAt,
+            updatedAt: model.message.updatedAt
+        };
+      }
+    
       static fragment() {
           return `
             fragment UserConversation on Conversation {
+                id
                 startedAt
                 user2 {
                     user {
-                      id
                       firstname
                       lastName
                     }
@@ -31,5 +43,23 @@ export default class ConversationModel {
                 }
             }
           `
+      }
+
+      static fragmentConversation() {
+          return `
+          fragment UserConversation on Conversation {
+            id
+            startedAt
+
+            message {
+              id
+              message
+              isSeen
+              isDeleted
+              createdAt
+              updatedAt
+            }
+          }
+        `
       }
   }

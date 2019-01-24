@@ -67,7 +67,7 @@ const resolvers = {
 
       await console.log(conversations);
 
-      const { startedAt, user2: { user: { id, firstName, lastName } }, group: { name }, message: { message, isSeen, createdAt } } = conversations;
+      const { id, startedAt, user2: { user: { firstName, lastName } }, group: { name }, message: { message, isSeen, createdAt } } = conversations;
       
       const result = new ConversationModel({ startedAt, id, firstName, lastName, name, message, isSeen, createdAt  });
       return result;
@@ -77,20 +77,15 @@ const resolvers = {
       if(context.user == null)
         throw new Error("User not found");
       
-      const { user2, page } = args;
+      const { id, page } = args;
 
       var query = {
         first: 20,
         skip: ( page - 1 ) * 10
       }
    
-      const result = await prisma.conversation({
-        user2: {
-          user: {
-            id: user2
-          }
-        }
-      }).message(query);
+      const result = await prisma.conversation({id})
+        .message(query);
 
       await console.log(result);
       
@@ -108,20 +103,46 @@ const resolvers = {
       }
   },
   Mutation: {
+    async addConversation(root, args, context) {
+
+      if(context.user == null)
+        throw new Error("User not found");
+      
+      const { user2, message } = args;
+
+      var conversation = {
+        user: { connect: { id: context.user.id } },
+        user2: { create: { user: { connect: { id: user2 } } } },
+        startedAt: Date.now(),
+        createdAt: Date.now(),
+        message: { create: [{
+          message,
+          createdAt: Date.now()
+        }] },
+      }
+   
+      const conversation = await prisma.createConversation(conversation)
+        .$fragment(ConversationModel.fragmentConversation())
+
+      const result = ConversationModel.mapConversation(conversation)
+      
+      return result;
+
+    },
     async addMessage(root, args, context) {
 
       if(context.user == null)
         throw new Error("User not found");
       
-      const { message, user2 } = args;
+      const { id, message } = args;
 
       var msg = {
         message,
-        user2:  { connect: { id: user2 } },
-        user: { connect: { id: context.user.id } }
+        conversation: { connect: { id } },
+        createdAt: Date.now()
       }
    
-      const result = await prisma.createMessage(msg).user2();
+      const result = await prisma.createMessage(msg);
       
       return result;
 
@@ -156,11 +177,30 @@ const resolvers = {
       
       const username = user.username;
 
+      await prisma.updateUser({
+        data: {
+          isActive: true
+        },
+        where: {
+          id: user.id
+        }
+      });
+
       return {
         username,
         email,
         token: jwt.sign({ username, password }, 'mysecret')
       } 
+    },
+    async logout (root, args, context) {
+      await prisma.updateUser({
+        data: {
+          isActive: false
+        },
+        where: {
+          id: context.user.id
+        }
+      });
     },
     async registration(root, args, context) {
       const { username, password, email } = args;
