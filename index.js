@@ -4,6 +4,8 @@ const { createError } = require('apollo-errors')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 
+import ConversationModel from './Api/Models/ConversationModel';
+
 const pubsub = new PubSub();
 
 const MESSAGE_ADDED = 'MESSAGE_ADDED';
@@ -48,13 +50,51 @@ const resolvers = {
 
       if (search != null)
         query = { ...query, where: { 
-
-         }  };
+            user2: {
+              user: {
+                OR: [{
+                  firstName_contains: search,
+                }, {
+                  lastName_contains:  search,
+                }]
+              }
+            }  
+         }
+        };
    
-      const result = await prisma.conversations(query);
+      const conversations = await prisma.conversations(query)
+        .$fragment(ConversationModel.fragment());
+
+      await console.log(conversations);
+
+      const { startedAt, user2: { user: { id, firstName, lastName } }, group: { name }, message: { message, isSeen, createdAt } } = conversations;
+      
+      const result = new ConversationModel({ startedAt, id, firstName, lastName, name, message, isSeen, createdAt  });
+      return result;
+    },
+    async getConversation(root, args, context) {
+
+      if(context.user == null)
+        throw new Error("User not found");
+      
+      const { user2, page } = args;
+
+      var query = {
+        first: 20,
+        skip: ( page - 1 ) * 10
+      }
+   
+      const result = await prisma.conversation({
+        user2: {
+          user: {
+            id: user2
+          }
+        }
+      }).message(query);
+
+      await console.log(result);
       
       return result;
-
     },
   },
   Subscription: {

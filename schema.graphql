@@ -5,7 +5,7 @@ type Query {
   publishedPosts: [Post!]!
   post(postId: ID!): Post
   postsByUser(userId: ID!): [Post!]!
-
+  
   getConversations(page: Int!, search: String): [ConversationModel!]
 }
 
@@ -40,14 +40,14 @@ type AuthPayload {
 
 type User {
   id: ID!
+  firstName: String!
+  lastName: String!
   email: String! 
   password: String!
   username: String!
   isActive: Boolean
   posts: [Post!]
   notifications: [Notification!]
-  messages: [Message!]
-  groups: [Group!]!
   user2: [User2!]
 }
 
@@ -58,8 +58,6 @@ type User2 {
 
 type Message {
   id: ID!
-  user: User!
-  user2: User2!
   message: String
   attached: [String!]
   isSeen: Boolean!

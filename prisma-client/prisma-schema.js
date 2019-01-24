@@ -1295,6 +1295,8 @@ type Subscription {
 
 type User {
   id: ID!
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   username: String!
@@ -1454,6 +1456,8 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   username: String!
@@ -1491,6 +1495,8 @@ input UserCreateOneWithoutUser2Input {
 }
 
 input UserCreateWithoutMessagesInput {
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   username: String!
@@ -1502,6 +1508,8 @@ input UserCreateWithoutMessagesInput {
 }
 
 input UserCreateWithoutNotificationsInput {
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   username: String!
@@ -1513,6 +1521,8 @@ input UserCreateWithoutNotificationsInput {
 }
 
 input UserCreateWithoutPostsInput {
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   username: String!
@@ -1524,6 +1534,8 @@ input UserCreateWithoutPostsInput {
 }
 
 input UserCreateWithoutUser2Input {
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   username: String!
@@ -1542,6 +1554,10 @@ type UserEdge {
 enum UserOrderByInput {
   id_ASC
   id_DESC
+  firstName_ASC
+  firstName_DESC
+  lastName_ASC
+  lastName_DESC
   email_ASC
   email_DESC
   password_ASC
@@ -1558,6 +1574,8 @@ enum UserOrderByInput {
 
 type UserPreviousValues {
   id: ID!
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   username: String!
@@ -1583,6 +1601,8 @@ input UserSubscriptionWhereInput {
 }
 
 input UserUpdateDataInput {
+  firstName: String
+  lastName: String
   email: String
   password: String
   username: String
@@ -1595,6 +1615,8 @@ input UserUpdateDataInput {
 }
 
 input UserUpdateInput {
+  firstName: String
+  lastName: String
   email: String
   password: String
   username: String
@@ -1607,6 +1629,8 @@ input UserUpdateInput {
 }
 
 input UserUpdateManyMutationInput {
+  firstName: String
+  lastName: String
   email: String
   password: String
   username: String
@@ -1649,6 +1673,8 @@ input UserUpdateOneRequiredWithoutUser2Input {
 }
 
 input UserUpdateWithoutMessagesDataInput {
+  firstName: String
+  lastName: String
   email: String
   password: String
   username: String
@@ -1660,6 +1686,8 @@ input UserUpdateWithoutMessagesDataInput {
 }
 
 input UserUpdateWithoutNotificationsDataInput {
+  firstName: String
+  lastName: String
   email: String
   password: String
   username: String
@@ -1671,6 +1699,8 @@ input UserUpdateWithoutNotificationsDataInput {
 }
 
 input UserUpdateWithoutPostsDataInput {
+  firstName: String
+  lastName: String
   email: String
   password: String
   username: String
@@ -1682,6 +1712,8 @@ input UserUpdateWithoutPostsDataInput {
 }
 
 input UserUpdateWithoutUser2DataInput {
+  firstName: String
+  lastName: String
   email: String
   password: String
   username: String
@@ -1732,6 +1764,34 @@ input UserWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  firstName: String
+  firstName_not: String
+  firstName_in: [String!]
+  firstName_not_in: [String!]
+  firstName_lt: String
+  firstName_lte: String
+  firstName_gt: String
+  firstName_gte: String
+  firstName_contains: String
+  firstName_not_contains: String
+  firstName_starts_with: String
+  firstName_not_starts_with: String
+  firstName_ends_with: String
+  firstName_not_ends_with: String
+  lastName: String
+  lastName_not: String
+  lastName_in: [String!]
+  lastName_not_in: [String!]
+  lastName_lt: String
+  lastName_lte: String
+  lastName_gt: String
+  lastName_gte: String
+  lastName_contains: String
+  lastName_not_contains: String
+  lastName_starts_with: String
+  lastName_not_starts_with: String
+  lastName_ends_with: String
+  lastName_not_ends_with: String
   email: String
   email_not: String
   email_in: [String!]
