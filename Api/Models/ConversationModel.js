@@ -1,13 +1,13 @@
-export default class ConversationModel {
-      constructor(result) {
+module.exports =  {
+      constructor: function(result) {
           this.id = result.id;
           this.name = `${result.firstName} ${result.lastName}`;
           this.startedAt = result.startedAt;
           this.logo = null;
           this.isActive = result.isActive;
-      }
+      },
 
-      static mapConversation(model) {
+      mapConversation: function(model) {
         return {
             id: model.id,
             startedAt: model.startedAt,
@@ -17,9 +17,8 @@ export default class ConversationModel {
             createdAt: model.message.createdAt,
             updatedAt: model.message.updatedAt
         };
-      }
-    
-      static fragment() {
+      },
+    fragment: function() {
           return `
             fragment UserConversation on Conversation {
                 id
@@ -43,9 +42,9 @@ export default class ConversationModel {
                 }
             }
           `
-      }
+      },
 
-      static fragmentConversation() {
+    fragmentConversation: function() {
           return `
           fragment UserConversation on Conversation {
             id

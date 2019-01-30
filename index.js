@@ -4,11 +4,7 @@ const { createError } = require('apollo-errors')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 
-import ConversationModel from './Api/Models/ConversationModel';
-
-const pubsub = new PubSub();
-
-const MESSAGE_ADDED = 'MESSAGE_ADDED';
+const ConversationModel = require('./Api/Models/ConversationModel');
 
 const resolvers = {
   Query: {
@@ -147,22 +143,6 @@ const resolvers = {
       return result;
 
     },
-    async getMessage(root, args, context) {
-
-      if(context.user == null)
-        throw new Error("User not found");
-      
-      const { user2 } = args;
-
-      var query = {
-        user2
-      }
-
-      const result = await prisma.message().user2(query);
-      
-      return result;
-
-    },
     async login(root, args, context) {
       const { email, password } = args;
 
@@ -203,7 +183,7 @@ const resolvers = {
       });
     },
     async registration(root, args, context) {
-      const { username, password, email } = args;
+      const { username, password, email, firstName, lastName } = args;
       const emailExist = await prisma.user({ email });
       if (emailExist)
         throw new Error('Email aready exist')
@@ -214,6 +194,8 @@ const resolvers = {
       await prisma.createUser({ username, password: hash, email })
     
       return {
+        firstName,
+        lastName,
         username,
         email,
         token: jwt.sign({ username, password }, 'mysecret')

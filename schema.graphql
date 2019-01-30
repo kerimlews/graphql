@@ -12,7 +12,7 @@ type Query {
 
 type Mutation {
   login(email: String!, password: String!): AuthPayload
-  logout()
+  logout: Boolean
   registration(username: String!, password: String!, email: String!): AuthPayload
   createUser(username: String!): User
   createDraft(title: String!, userId: ID!): Post
@@ -25,7 +25,7 @@ type ConversationModel {
   id: Int!
   name: String!
   message: String
-  startedAt: DateTime!
+  startedAt: String!
   logo: String
   isActive: Boolean!
 }
@@ -65,8 +65,8 @@ type Message {
   attached: [String!]
   isSeen: Boolean!
   isDeleted: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: String!
+  updatedAt: String!
   conversation: Conversation!
 }
 
@@ -76,8 +76,8 @@ type Conversation {
    group: Group
    user2: User2
    message: [Message!]
-   startedAt: DateTime!
-   createdAt: DateTime!
+   startedAt: String!
+   createdAt: String!
 }
 
 type Group {
