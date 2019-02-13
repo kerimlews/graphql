@@ -7,13 +7,13 @@ type Query {
   postsByUser(userId: ID!): [Post!]!
   
   getConversations(page: Int!, search: String): [ConversationModel!]
-  getConversation(page: Int!, user2: String!): [Message!]
+  getConversation(page: Int!, id: String!): [Message!]
 }
 
 type Mutation {
   login(email: String!, password: String!): AuthPayload
   logout: Boolean
-  registration(username: String!, password: String!, email: String!): AuthPayload
+  registration(email: String!, username: String!, firstName: String!, lastName: String!, password: String!): AuthPayload
   createUser(username: String!): User
   createDraft(title: String!, userId: ID!): Post
   publish(postId: ID!): Post
@@ -38,6 +38,8 @@ type Subscription {
 type AuthPayload {
   token: String!
   username: String!
+  firstName: String!
+  lastName: String!
   email: String!
 }
 

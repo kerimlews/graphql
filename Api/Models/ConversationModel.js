@@ -25,7 +25,7 @@ module.exports =  {
                 startedAt
                 user2 {
                     user {
-                      firstname
+                      firstName
                       lastName
                     }
                 }
