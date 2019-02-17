@@ -17,12 +17,12 @@ type Mutation {
   createUser(username: String!): User
   createDraft(title: String!, userId: ID!): Post
   publish(postId: ID!): Post
-  addMessage(user2: String!, message: String): Message!
+  addMessage(id: String!, message: String): Message!
   addConversation(user2: String!, message: String): ConversationModel
 }
 
 type Subscription {
-  message: Message!
+  message: Message
 }
 
 type ConversationModel {

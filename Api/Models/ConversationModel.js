@@ -48,7 +48,7 @@ module.exports =  {
                     name
                 }
 
-                message(orderBy: createdAt_ASC first: 1) {
+                message(orderBy: createdAt_DESC first: 1) {
                     id
                     message
                     isSeen

@@ -12,7 +12,7 @@ const resolvers = {
       if (context.user == null)
         return null;
       
-      return { username, email, firstName, lastName } = context.user;
+      return context.user;
     },
     findUsers(root, args, context) {
       return prisma.users()
@@ -103,7 +103,7 @@ const resolvers = {
       await console.log(result);
       
       return result;
-    },
+    }
   },
   Subscription: {
     message: {
@@ -152,20 +152,19 @@ const resolvers = {
       
       const { id, message } = args;
 
-      var msg = {
+      const msg = {
         message,
-        conversation: { connect: { id } },
-        createdAt: Date.now()
+        conversation: { connect: { id } }
       }
-   
+
       const result = await prisma.createMessage(msg);
-      
+
       return result;
     },
     async login(root, args, context) {
       const { email, password } = args;
 
-      var user = await prisma.user({ email })
+      const user = await prisma.user({ email });
 
       if(user == null)
         return new Error('Email is invalid')
@@ -185,13 +184,17 @@ const resolvers = {
         }
       });
 
-      return {
+      const token = jwt.sign({ username, password }, 'mysecret');
+
+      var response = {
         username,
         firstName: user.firstName,
         lastName: user.lastName,
         email,
-        token: jwt.sign({ username, password }, 'mysecret')
-      } 
+        token
+      };
+
+      return response;
     },
     async logout (root, args, context) {
       await prisma.updateUser({
@@ -214,7 +217,16 @@ const resolvers = {
       const salt = await bcrypt.genSaltSync(10);
       const hash = await bcrypt.hashSync(password, salt);
 
-      await prisma.createUser({ username, firstName, lastName, password: hash, email })
+      const user = {
+        email,
+        username,
+        firstName,
+        lastName,
+        password: hash,
+        isActive: true
+      };
+      
+      await prisma.createUser(user);
       
       const token = jwt.sign({ username, password }, 'mysecret');
 
