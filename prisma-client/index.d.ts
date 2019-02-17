@@ -20,7 +20,6 @@ export interface Exists {
   notification: (where?: NotificationWhereInput) => Promise<boolean>;
   post: (where?: PostWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
-  user2: (where?: User2WhereInput) => Promise<boolean>;
 }
 
 export interface Node {}
@@ -156,25 +155,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => UserConnectionPromise;
-  user2: (where: User2WhereUniqueInput) => User2Promise;
-  user2s: (args?: {
-    where?: User2WhereInput;
-    orderBy?: User2OrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<User2>;
-  user2sConnection: (args?: {
-    where?: User2WhereInput;
-    orderBy?: User2OrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => User2ConnectionPromise;
   node: (args: { id: ID_Output }) => Node;
 
   /**
@@ -285,18 +265,6 @@ export interface Prisma {
   }) => UserPromise;
   deleteUser: (where: UserWhereUniqueInput) => UserPromise;
   deleteManyUsers: (where?: UserWhereInput) => BatchPayloadPromise;
-  createUser2: (data: User2CreateInput) => User2Promise;
-  updateUser2: (args: {
-    data: User2UpdateInput;
-    where: User2WhereUniqueInput;
-  }) => User2Promise;
-  upsertUser2: (args: {
-    where: User2WhereUniqueInput;
-    create: User2CreateInput;
-    update: User2UpdateInput;
-  }) => User2Promise;
-  deleteUser2: (where: User2WhereUniqueInput) => User2Promise;
-  deleteManyUser2s: (where?: User2WhereInput) => BatchPayloadPromise;
 
   /**
    * Subscriptions
@@ -324,9 +292,6 @@ export interface Subscription {
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
-  user2: (
-    where?: User2SubscriptionWhereInput
-  ) => User2SubscriptionPayloadSubscription;
 }
 
 export interface ClientConstructor<T> {
@@ -358,14 +323,6 @@ export type NotificationOrderByInput =
   | "type_DESC"
   | "title_ASC"
   | "title_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type User2OrderByInput =
-  | "id_ASC"
-  | "id_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -427,7 +384,123 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface NotificationScalarWhereInput {
+export interface NotificationUpdateManyWithWhereNestedInput {
+  where: NotificationScalarWhereInput;
+  data: NotificationUpdateManyDataInput;
+}
+
+export type ConversationWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface UserCreateWithoutConversationInput {
+  firstName: String;
+  lastName: String;
+  email: String;
+  password: String;
+  username: String;
+  isActive?: Boolean;
+  posts?: PostCreateManyWithoutAuthorInput;
+  notifications?: NotificationCreateManyWithoutUserInput;
+}
+
+export interface ConversationCreateOneWithoutMessageInput {
+  create?: ConversationCreateWithoutMessageInput;
+  connect?: ConversationWhereUniqueInput;
+}
+
+export interface ConversationUpdateInput {
+  user?: UserUpdateOneRequiredInput;
+  group?: GroupUpdateOneWithoutConversationInput;
+  user2?: UserUpdateOneRequiredWithoutConversationInput;
+  message?: MessageUpdateManyWithoutConversationInput;
+  startedAt?: DateTimeInput;
+}
+
+export interface GroupUpdateOneWithoutConversationInput {
+  create?: GroupCreateWithoutConversationInput;
+  update?: GroupUpdateWithoutConversationDataInput;
+  upsert?: GroupUpsertWithoutConversationInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: GroupWhereUniqueInput;
+}
+
+export interface UserUpdateOneRequiredInput {
+  create?: UserCreateInput;
+  update?: UserUpdateDataInput;
+  upsert?: UserUpsertNestedInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface MessageWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  message?: String;
+  message_not?: String;
+  message_in?: String[] | String;
+  message_not_in?: String[] | String;
+  message_lt?: String;
+  message_lte?: String;
+  message_gt?: String;
+  message_gte?: String;
+  message_contains?: String;
+  message_not_contains?: String;
+  message_starts_with?: String;
+  message_not_starts_with?: String;
+  message_ends_with?: String;
+  message_not_ends_with?: String;
+  isSeen?: Boolean;
+  isSeen_not?: Boolean;
+  isDeleted?: Boolean;
+  isDeleted_not?: Boolean;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  updatedAt?: DateTimeInput;
+  updatedAt_not?: DateTimeInput;
+  updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  updatedAt_lt?: DateTimeInput;
+  updatedAt_lte?: DateTimeInput;
+  updatedAt_gt?: DateTimeInput;
+  updatedAt_gte?: DateTimeInput;
+  conversation?: ConversationWhereInput;
+  AND?: MessageWhereInput[] | MessageWhereInput;
+  OR?: MessageWhereInput[] | MessageWhereInput;
+  NOT?: MessageWhereInput[] | MessageWhereInput;
+}
+
+export interface UserUpdateDataInput {
+  firstName?: String;
+  lastName?: String;
+  email?: String;
+  password?: String;
+  username?: String;
+  isActive?: Boolean;
+  posts?: PostUpdateManyWithoutAuthorInput;
+  notifications?: NotificationUpdateManyWithoutUserInput;
+  conversation?: ConversationUpdateManyWithoutUser2Input;
+}
+
+export interface NotificationWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -464,77 +537,27 @@ export interface NotificationScalarWhereInput {
   title_not_starts_with?: String;
   title_ends_with?: String;
   title_not_ends_with?: String;
-  AND?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
-  OR?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
-  NOT?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
-}
-
-export type ConversationWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface User2WhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
   user?: UserWhereInput;
-  AND?: User2WhereInput[] | User2WhereInput;
-  OR?: User2WhereInput[] | User2WhereInput;
-  NOT?: User2WhereInput[] | User2WhereInput;
+  AND?: NotificationWhereInput[] | NotificationWhereInput;
+  OR?: NotificationWhereInput[] | NotificationWhereInput;
+  NOT?: NotificationWhereInput[] | NotificationWhereInput;
 }
 
-export interface UserCreateWithoutUser2Input {
-  firstName: String;
-  lastName: String;
-  email: String;
-  password: String;
-  username: String;
-  isActive?: Boolean;
-  posts?: PostCreateManyWithoutAuthorInput;
-  notifications?: NotificationCreateManyWithoutUserInput;
-}
-
-export interface GroupUpdateManyMutationInput {
-  name?: String;
-}
-
-export interface MessageCreateManyWithoutConversationInput {
-  create?:
-    | MessageCreateWithoutConversationInput[]
-    | MessageCreateWithoutConversationInput;
-  connect?: MessageWhereUniqueInput[] | MessageWhereUniqueInput;
-}
-
-export interface GroupUpdateOneWithoutConversationInput {
-  create?: GroupCreateWithoutConversationInput;
-  update?: GroupUpdateWithoutConversationDataInput;
-  upsert?: GroupUpsertWithoutConversationInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: GroupWhereUniqueInput;
-}
-
-export interface MessageCreateWithoutConversationInput {
-  message?: String;
-  attached?: MessageCreateattachedInput;
-  isSeen?: Boolean;
-  isDeleted?: Boolean;
+export interface PostUpdateManyWithoutAuthorInput {
+  create?: PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput;
+  delete?: PostWhereUniqueInput[] | PostWhereUniqueInput;
+  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput;
+  disconnect?: PostWhereUniqueInput[] | PostWhereUniqueInput;
+  update?:
+    | PostUpdateWithWhereUniqueWithoutAuthorInput[]
+    | PostUpdateWithWhereUniqueWithoutAuthorInput;
+  upsert?:
+    | PostUpsertWithWhereUniqueWithoutAuthorInput[]
+    | PostUpsertWithWhereUniqueWithoutAuthorInput;
+  deleteMany?: PostScalarWhereInput[] | PostScalarWhereInput;
+  updateMany?:
+    | PostUpdateManyWithWhereNestedInput[]
+    | PostUpdateManyWithWhereNestedInput;
 }
 
 export interface UserWhereInput {
@@ -630,577 +653,17 @@ export interface UserWhereInput {
   notifications_every?: NotificationWhereInput;
   notifications_some?: NotificationWhereInput;
   notifications_none?: NotificationWhereInput;
-  user2_every?: User2WhereInput;
-  user2_some?: User2WhereInput;
-  user2_none?: User2WhereInput;
+  conversation_every?: ConversationWhereInput;
+  conversation_some?: ConversationWhereInput;
+  conversation_none?: ConversationWhereInput;
   AND?: UserWhereInput[] | UserWhereInput;
   OR?: UserWhereInput[] | UserWhereInput;
   NOT?: UserWhereInput[] | UserWhereInput;
 }
 
-export interface MessageCreateattachedInput {
-  set?: String[] | String;
-}
-
-export interface PostSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: PostWhereInput;
-  AND?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput;
-  OR?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput;
-  NOT?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput;
-}
-
-export interface ConversationUpdateInput {
-  user?: UserUpdateOneRequiredInput;
-  group?: GroupUpdateOneWithoutConversationInput;
-  user2?: User2UpdateOneInput;
-  message?: MessageUpdateManyWithoutConversationInput;
-  startedAt?: DateTimeInput;
-}
-
-export interface GroupWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  conversation_every?: ConversationWhereInput;
-  conversation_some?: ConversationWhereInput;
-  conversation_none?: ConversationWhereInput;
-  AND?: GroupWhereInput[] | GroupWhereInput;
-  OR?: GroupWhereInput[] | GroupWhereInput;
-  NOT?: GroupWhereInput[] | GroupWhereInput;
-}
-
-export interface UserUpdateOneRequiredInput {
-  create?: UserCreateInput;
-  update?: UserUpdateDataInput;
-  upsert?: UserUpsertNestedInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface NotificationSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: NotificationWhereInput;
-  AND?:
-    | NotificationSubscriptionWhereInput[]
-    | NotificationSubscriptionWhereInput;
-  OR?:
-    | NotificationSubscriptionWhereInput[]
-    | NotificationSubscriptionWhereInput;
-  NOT?:
-    | NotificationSubscriptionWhereInput[]
-    | NotificationSubscriptionWhereInput;
-}
-
-export interface UserUpdateDataInput {
-  firstName?: String;
-  lastName?: String;
-  email?: String;
-  password?: String;
-  username?: String;
-  isActive?: Boolean;
-  posts?: PostUpdateManyWithoutAuthorInput;
-  notifications?: NotificationUpdateManyWithoutUserInput;
-  user2?: User2UpdateManyWithoutUserInput;
-}
-
-export interface MessageSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: MessageWhereInput;
-  AND?: MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput;
-  OR?: MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput;
-  NOT?: MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput;
-}
-
-export interface PostUpdateManyWithoutAuthorInput {
-  create?: PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput;
-  delete?: PostWhereUniqueInput[] | PostWhereUniqueInput;
-  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput;
-  disconnect?: PostWhereUniqueInput[] | PostWhereUniqueInput;
-  update?:
-    | PostUpdateWithWhereUniqueWithoutAuthorInput[]
-    | PostUpdateWithWhereUniqueWithoutAuthorInput;
-  upsert?:
-    | PostUpsertWithWhereUniqueWithoutAuthorInput[]
-    | PostUpsertWithWhereUniqueWithoutAuthorInput;
-  deleteMany?: PostScalarWhereInput[] | PostScalarWhereInput;
-  updateMany?:
-    | PostUpdateManyWithWhereNestedInput[]
-    | PostUpdateManyWithWhereNestedInput;
-}
-
-export interface ConversationSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ConversationWhereInput;
-  AND?:
-    | ConversationSubscriptionWhereInput[]
-    | ConversationSubscriptionWhereInput;
-  OR?:
-    | ConversationSubscriptionWhereInput[]
-    | ConversationSubscriptionWhereInput;
-  NOT?:
-    | ConversationSubscriptionWhereInput[]
-    | ConversationSubscriptionWhereInput;
-}
-
 export interface PostUpdateWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput;
   data: PostUpdateWithoutAuthorDataInput;
-}
-
-export interface UserUpdateManyMutationInput {
-  firstName?: String;
-  lastName?: String;
-  email?: String;
-  password?: String;
-  username?: String;
-  isActive?: Boolean;
-}
-
-export interface PostUpdateWithoutAuthorDataInput {
-  title?: String;
-  targets?: String;
-  published?: Boolean;
-}
-
-export type GroupWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface PostUpsertWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput;
-  update: PostUpdateWithoutAuthorDataInput;
-  create: PostCreateWithoutAuthorInput;
-}
-
-export interface UserUpsertWithoutPostsInput {
-  update: UserUpdateWithoutPostsDataInput;
-  create: UserCreateWithoutPostsInput;
-}
-
-export interface PostScalarWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  title?: String;
-  title_not?: String;
-  title_in?: String[] | String;
-  title_not_in?: String[] | String;
-  title_lt?: String;
-  title_lte?: String;
-  title_gt?: String;
-  title_gte?: String;
-  title_contains?: String;
-  title_not_contains?: String;
-  title_starts_with?: String;
-  title_not_starts_with?: String;
-  title_ends_with?: String;
-  title_not_ends_with?: String;
-  targets?: String;
-  targets_not?: String;
-  targets_in?: String[] | String;
-  targets_not_in?: String[] | String;
-  targets_lt?: String;
-  targets_lte?: String;
-  targets_gt?: String;
-  targets_gte?: String;
-  targets_contains?: String;
-  targets_not_contains?: String;
-  targets_starts_with?: String;
-  targets_not_starts_with?: String;
-  targets_ends_with?: String;
-  targets_not_ends_with?: String;
-  published?: Boolean;
-  published_not?: Boolean;
-  AND?: PostScalarWhereInput[] | PostScalarWhereInput;
-  OR?: PostScalarWhereInput[] | PostScalarWhereInput;
-  NOT?: PostScalarWhereInput[] | PostScalarWhereInput;
-}
-
-export interface UserUpdateOneRequiredWithoutPostsInput {
-  create?: UserCreateWithoutPostsInput;
-  update?: UserUpdateWithoutPostsDataInput;
-  upsert?: UserUpsertWithoutPostsInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface PostUpdateManyWithWhereNestedInput {
-  where: PostScalarWhereInput;
-  data: PostUpdateManyDataInput;
-}
-
-export interface PostUpdateInput {
-  title?: String;
-  targets?: String;
-  published?: Boolean;
-  author?: UserUpdateOneRequiredWithoutPostsInput;
-}
-
-export interface PostUpdateManyDataInput {
-  title?: String;
-  targets?: String;
-  published?: Boolean;
-}
-
-export interface UserCreateOneWithoutPostsInput {
-  create?: UserCreateWithoutPostsInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface NotificationUpdateManyWithoutUserInput {
-  create?:
-    | NotificationCreateWithoutUserInput[]
-    | NotificationCreateWithoutUserInput;
-  delete?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
-  connect?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
-  disconnect?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
-  update?:
-    | NotificationUpdateWithWhereUniqueWithoutUserInput[]
-    | NotificationUpdateWithWhereUniqueWithoutUserInput;
-  upsert?:
-    | NotificationUpsertWithWhereUniqueWithoutUserInput[]
-    | NotificationUpsertWithWhereUniqueWithoutUserInput;
-  deleteMany?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
-  updateMany?:
-    | NotificationUpdateManyWithWhereNestedInput[]
-    | NotificationUpdateManyWithWhereNestedInput;
-}
-
-export interface PostCreateInput {
-  title: String;
-  targets?: String;
-  published?: Boolean;
-  author: UserCreateOneWithoutPostsInput;
-}
-
-export interface NotificationUpdateWithWhereUniqueWithoutUserInput {
-  where: NotificationWhereUniqueInput;
-  data: NotificationUpdateWithoutUserDataInput;
-}
-
-export interface UserUpsertWithoutNotificationsInput {
-  update: UserUpdateWithoutNotificationsDataInput;
-  create: UserCreateWithoutNotificationsInput;
-}
-
-export interface NotificationUpdateWithoutUserDataInput {
-  type?: Int;
-  title?: String;
-}
-
-export interface UserUpdateWithoutNotificationsDataInput {
-  firstName?: String;
-  lastName?: String;
-  email?: String;
-  password?: String;
-  username?: String;
-  isActive?: Boolean;
-  posts?: PostUpdateManyWithoutAuthorInput;
-  user2?: User2UpdateManyWithoutUserInput;
-}
-
-export interface NotificationUpsertWithWhereUniqueWithoutUserInput {
-  where: NotificationWhereUniqueInput;
-  update: NotificationUpdateWithoutUserDataInput;
-  create: NotificationCreateWithoutUserInput;
-}
-
-export interface NotificationUpdateInput {
-  type?: Int;
-  title?: String;
-  user?: UserUpdateOneRequiredWithoutNotificationsInput;
-}
-
-export interface MessageUpdateInput {
-  message?: String;
-  attached?: MessageUpdateattachedInput;
-  isSeen?: Boolean;
-  isDeleted?: Boolean;
-  conversation?: ConversationUpdateOneRequiredWithoutMessageInput;
-}
-
-export interface UserCreateWithoutNotificationsInput {
-  firstName: String;
-  lastName: String;
-  email: String;
-  password: String;
-  username: String;
-  isActive?: Boolean;
-  posts?: PostCreateManyWithoutAuthorInput;
-  user2?: User2CreateManyWithoutUserInput;
-}
-
-export interface NotificationUpdateManyWithWhereNestedInput {
-  where: NotificationScalarWhereInput;
-  data: NotificationUpdateManyDataInput;
-}
-
-export interface NotificationCreateInput {
-  type: Int;
-  title?: String;
-  user: UserCreateOneWithoutNotificationsInput;
-}
-
-export interface NotificationUpdateManyDataInput {
-  type?: Int;
-  title?: String;
-}
-
-export type User2WhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface User2UpdateManyWithoutUserInput {
-  delete?: User2WhereUniqueInput[] | User2WhereUniqueInput;
-  connect?: User2WhereUniqueInput[] | User2WhereUniqueInput;
-  disconnect?: User2WhereUniqueInput[] | User2WhereUniqueInput;
-  deleteMany?: User2ScalarWhereInput[] | User2ScalarWhereInput;
-}
-
-export interface ConversationUpdateWithoutMessageDataInput {
-  user?: UserUpdateOneRequiredInput;
-  group?: GroupUpdateOneWithoutConversationInput;
-  user2?: User2UpdateOneInput;
-  startedAt?: DateTimeInput;
-}
-
-export interface User2ScalarWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  AND?: User2ScalarWhereInput[] | User2ScalarWhereInput;
-  OR?: User2ScalarWhereInput[] | User2ScalarWhereInput;
-  NOT?: User2ScalarWhereInput[] | User2ScalarWhereInput;
-}
-
-export interface UserCreateOneInput {
-  create?: UserCreateInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface ConversationCreateWithoutMessageInput {
-  user: UserCreateOneInput;
-  group?: GroupCreateOneWithoutConversationInput;
-  user2?: User2CreateOneInput;
-  startedAt: DateTimeInput;
-}
-
-export interface PostCreateManyWithoutAuthorInput {
-  create?: PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput;
-  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput;
-}
-
-export interface NotificationWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  type?: Int;
-  type_not?: Int;
-  type_in?: Int[] | Int;
-  type_not_in?: Int[] | Int;
-  type_lt?: Int;
-  type_lte?: Int;
-  type_gt?: Int;
-  type_gte?: Int;
-  title?: String;
-  title_not?: String;
-  title_in?: String[] | String;
-  title_not_in?: String[] | String;
-  title_lt?: String;
-  title_lte?: String;
-  title_gt?: String;
-  title_gte?: String;
-  title_contains?: String;
-  title_not_contains?: String;
-  title_starts_with?: String;
-  title_not_starts_with?: String;
-  title_ends_with?: String;
-  title_not_ends_with?: String;
-  user?: UserWhereInput;
-  AND?: NotificationWhereInput[] | NotificationWhereInput;
-  OR?: NotificationWhereInput[] | NotificationWhereInput;
-  NOT?: NotificationWhereInput[] | NotificationWhereInput;
-}
-
-export interface NotificationCreateManyWithoutUserInput {
-  create?:
-    | NotificationCreateWithoutUserInput[]
-    | NotificationCreateWithoutUserInput;
-  connect?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
-}
-
-export interface GroupUpdateWithoutConversationDataInput {
-  name?: String;
-}
-
-export interface User2CreateManyWithoutUserInput {
-  connect?: User2WhereUniqueInput[] | User2WhereUniqueInput;
-}
-
-export interface GroupUpsertWithoutConversationInput {
-  update: GroupUpdateWithoutConversationDataInput;
-  create: GroupCreateWithoutConversationInput;
-}
-
-export interface GroupCreateWithoutConversationInput {
-  name?: String;
-}
-
-export interface User2UpdateOneInput {
-  create?: User2CreateInput;
-  update?: User2UpdateDataInput;
-  upsert?: User2UpsertNestedInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: User2WhereUniqueInput;
-}
-
-export interface User2CreateInput {
-  user: UserCreateOneWithoutUser2Input;
-}
-
-export interface User2UpdateDataInput {
-  user?: UserUpdateOneRequiredWithoutUser2Input;
-}
-
-export interface User2SubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: User2WhereInput;
-  AND?: User2SubscriptionWhereInput[] | User2SubscriptionWhereInput;
-  OR?: User2SubscriptionWhereInput[] | User2SubscriptionWhereInput;
-  NOT?: User2SubscriptionWhereInput[] | User2SubscriptionWhereInput;
-}
-
-export interface UserUpdateOneRequiredWithoutUser2Input {
-  create?: UserCreateWithoutUser2Input;
-  update?: UserUpdateWithoutUser2DataInput;
-  upsert?: UserUpsertWithoutUser2Input;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface ConversationWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  user?: UserWhereInput;
-  group?: GroupWhereInput;
-  user2?: User2WhereInput;
-  message_every?: MessageWhereInput;
-  message_some?: MessageWhereInput;
-  message_none?: MessageWhereInput;
-  startedAt?: DateTimeInput;
-  startedAt_not?: DateTimeInput;
-  startedAt_in?: DateTimeInput[] | DateTimeInput;
-  startedAt_not_in?: DateTimeInput[] | DateTimeInput;
-  startedAt_lt?: DateTimeInput;
-  startedAt_lte?: DateTimeInput;
-  startedAt_gt?: DateTimeInput;
-  startedAt_gte?: DateTimeInput;
-  createdAt?: DateTimeInput;
-  createdAt_not?: DateTimeInput;
-  createdAt_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_lt?: DateTimeInput;
-  createdAt_lte?: DateTimeInput;
-  createdAt_gt?: DateTimeInput;
-  createdAt_gte?: DateTimeInput;
-  AND?: ConversationWhereInput[] | ConversationWhereInput;
-  OR?: ConversationWhereInput[] | ConversationWhereInput;
-  NOT?: ConversationWhereInput[] | ConversationWhereInput;
-}
-
-export interface UserUpdateWithoutUser2DataInput {
-  firstName?: String;
-  lastName?: String;
-  email?: String;
-  password?: String;
-  username?: String;
-  isActive?: Boolean;
-  posts?: PostUpdateManyWithoutAuthorInput;
-  notifications?: NotificationUpdateManyWithoutUserInput;
 }
 
 export interface PostWhereInput {
@@ -1254,24 +717,364 @@ export interface PostWhereInput {
   NOT?: PostWhereInput[] | PostWhereInput;
 }
 
-export interface UserUpsertWithoutUser2Input {
-  update: UserUpdateWithoutUser2DataInput;
-  create: UserCreateWithoutUser2Input;
+export interface PostUpdateWithoutAuthorDataInput {
+  title?: String;
+  targets?: String;
+  published?: Boolean;
 }
 
-export interface User2UpdateInput {
-  user?: UserUpdateOneRequiredWithoutUser2Input;
+export interface GroupSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: GroupWhereInput;
+  AND?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
+  OR?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
+  NOT?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
 }
 
-export interface User2UpsertNestedInput {
-  update: User2UpdateDataInput;
-  create: User2CreateInput;
+export interface PostUpsertWithWhereUniqueWithoutAuthorInput {
+  where: PostWhereUniqueInput;
+  update: PostUpdateWithoutAuthorDataInput;
+  create: PostCreateWithoutAuthorInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  firstName?: String;
+  lastName?: String;
+  email?: String;
+  password?: String;
+  username?: String;
+  isActive?: Boolean;
+}
+
+export interface PostScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  title?: String;
+  title_not?: String;
+  title_in?: String[] | String;
+  title_not_in?: String[] | String;
+  title_lt?: String;
+  title_lte?: String;
+  title_gt?: String;
+  title_gte?: String;
+  title_contains?: String;
+  title_not_contains?: String;
+  title_starts_with?: String;
+  title_not_starts_with?: String;
+  title_ends_with?: String;
+  title_not_ends_with?: String;
+  targets?: String;
+  targets_not?: String;
+  targets_in?: String[] | String;
+  targets_not_in?: String[] | String;
+  targets_lt?: String;
+  targets_lte?: String;
+  targets_gt?: String;
+  targets_gte?: String;
+  targets_contains?: String;
+  targets_not_contains?: String;
+  targets_starts_with?: String;
+  targets_not_starts_with?: String;
+  targets_ends_with?: String;
+  targets_not_ends_with?: String;
+  published?: Boolean;
+  published_not?: Boolean;
+  AND?: PostScalarWhereInput[] | PostScalarWhereInput;
+  OR?: PostScalarWhereInput[] | PostScalarWhereInput;
+  NOT?: PostScalarWhereInput[] | PostScalarWhereInput;
 }
 
 export interface PostUpdateManyMutationInput {
   title?: String;
   targets?: String;
   published?: Boolean;
+}
+
+export interface PostUpdateManyWithWhereNestedInput {
+  where: PostScalarWhereInput;
+  data: PostUpdateManyDataInput;
+}
+
+export type GroupWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface PostUpdateManyDataInput {
+  title?: String;
+  targets?: String;
+  published?: Boolean;
+}
+
+export interface UserUpdateOneRequiredWithoutPostsInput {
+  create?: UserCreateWithoutPostsInput;
+  update?: UserUpdateWithoutPostsDataInput;
+  upsert?: UserUpsertWithoutPostsInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface NotificationUpdateManyWithoutUserInput {
+  create?:
+    | NotificationCreateWithoutUserInput[]
+    | NotificationCreateWithoutUserInput;
+  delete?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
+  connect?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
+  disconnect?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
+  update?:
+    | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    | NotificationUpdateWithWhereUniqueWithoutUserInput;
+  upsert?:
+    | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    | NotificationUpsertWithWhereUniqueWithoutUserInput;
+  deleteMany?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
+  updateMany?:
+    | NotificationUpdateManyWithWhereNestedInput[]
+    | NotificationUpdateManyWithWhereNestedInput;
+}
+
+export interface UserCreateWithoutPostsInput {
+  firstName: String;
+  lastName: String;
+  email: String;
+  password: String;
+  username: String;
+  isActive?: Boolean;
+  notifications?: NotificationCreateManyWithoutUserInput;
+  conversation?: ConversationCreateManyWithoutUser2Input;
+}
+
+export interface NotificationUpdateWithWhereUniqueWithoutUserInput {
+  where: NotificationWhereUniqueInput;
+  data: NotificationUpdateWithoutUserDataInput;
+}
+
+export interface UserCreateOneWithoutPostsInput {
+  create?: UserCreateWithoutPostsInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface NotificationUpdateWithoutUserDataInput {
+  type?: Int;
+  title?: String;
+}
+
+export interface NotificationUpdateManyMutationInput {
+  type?: Int;
+  title?: String;
+}
+
+export interface NotificationUpsertWithWhereUniqueWithoutUserInput {
+  where: NotificationWhereUniqueInput;
+  update: NotificationUpdateWithoutUserDataInput;
+  create: NotificationCreateWithoutUserInput;
+}
+
+export interface UserUpsertWithoutNotificationsInput {
+  update: UserUpdateWithoutNotificationsDataInput;
+  create: UserCreateWithoutNotificationsInput;
+}
+
+export interface NotificationScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  type?: Int;
+  type_not?: Int;
+  type_in?: Int[] | Int;
+  type_not_in?: Int[] | Int;
+  type_lt?: Int;
+  type_lte?: Int;
+  type_gt?: Int;
+  type_gte?: Int;
+  title?: String;
+  title_not?: String;
+  title_in?: String[] | String;
+  title_not_in?: String[] | String;
+  title_lt?: String;
+  title_lte?: String;
+  title_gt?: String;
+  title_gte?: String;
+  title_contains?: String;
+  title_not_contains?: String;
+  title_starts_with?: String;
+  title_not_starts_with?: String;
+  title_ends_with?: String;
+  title_not_ends_with?: String;
+  AND?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
+  OR?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
+  NOT?: NotificationScalarWhereInput[] | NotificationScalarWhereInput;
+}
+
+export interface UserUpdateOneRequiredWithoutNotificationsInput {
+  create?: UserCreateWithoutNotificationsInput;
+  update?: UserUpdateWithoutNotificationsDataInput;
+  upsert?: UserUpsertWithoutNotificationsInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface ConversationUpdateOneRequiredWithoutMessageInput {
+  create?: ConversationCreateWithoutMessageInput;
+  update?: ConversationUpdateWithoutMessageDataInput;
+  upsert?: ConversationUpsertWithoutMessageInput;
+  connect?: ConversationWhereUniqueInput;
+}
+
+export interface NotificationUpdateInput {
+  type?: Int;
+  title?: String;
+  user?: UserUpdateOneRequiredWithoutNotificationsInput;
+}
+
+export interface NotificationUpdateManyDataInput {
+  type?: Int;
+  title?: String;
+}
+
+export interface UserCreateOneWithoutNotificationsInput {
+  create?: UserCreateWithoutNotificationsInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface ConversationUpdateManyWithoutUser2Input {
+  create?:
+    | ConversationCreateWithoutUser2Input[]
+    | ConversationCreateWithoutUser2Input;
+  delete?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
+  connect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
+  disconnect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
+  update?:
+    | ConversationUpdateWithWhereUniqueWithoutUser2Input[]
+    | ConversationUpdateWithWhereUniqueWithoutUser2Input;
+  upsert?:
+    | ConversationUpsertWithWhereUniqueWithoutUser2Input[]
+    | ConversationUpsertWithWhereUniqueWithoutUser2Input;
+  deleteMany?: ConversationScalarWhereInput[] | ConversationScalarWhereInput;
+  updateMany?:
+    | ConversationUpdateManyWithWhereNestedInput[]
+    | ConversationUpdateManyWithWhereNestedInput;
+}
+
+export interface NotificationCreateInput {
+  type: Int;
+  title?: String;
+  user: UserCreateOneWithoutNotificationsInput;
+}
+
+export interface ConversationUpdateWithWhereUniqueWithoutUser2Input {
+  where: ConversationWhereUniqueInput;
+  data: ConversationUpdateWithoutUser2DataInput;
+}
+
+export interface ConversationUpsertWithoutMessageInput {
+  update: ConversationUpdateWithoutMessageDataInput;
+  create: ConversationCreateWithoutMessageInput;
+}
+
+export interface ConversationUpdateWithoutUser2DataInput {
+  user?: UserUpdateOneRequiredInput;
+  group?: GroupUpdateOneWithoutConversationInput;
+  message?: MessageUpdateManyWithoutConversationInput;
+  startedAt?: DateTimeInput;
+}
+
+export interface UserCreateOneInput {
+  create?: UserCreateInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface ConversationWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  user?: UserWhereInput;
+  group?: GroupWhereInput;
+  user2?: UserWhereInput;
+  message_every?: MessageWhereInput;
+  message_some?: MessageWhereInput;
+  message_none?: MessageWhereInput;
+  startedAt?: DateTimeInput;
+  startedAt_not?: DateTimeInput;
+  startedAt_in?: DateTimeInput[] | DateTimeInput;
+  startedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  startedAt_lt?: DateTimeInput;
+  startedAt_lte?: DateTimeInput;
+  startedAt_gt?: DateTimeInput;
+  startedAt_gte?: DateTimeInput;
+  createdAt?: DateTimeInput;
+  createdAt_not?: DateTimeInput;
+  createdAt_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
+  createdAt_lt?: DateTimeInput;
+  createdAt_lte?: DateTimeInput;
+  createdAt_gt?: DateTimeInput;
+  createdAt_gte?: DateTimeInput;
+  AND?: ConversationWhereInput[] | ConversationWhereInput;
+  OR?: ConversationWhereInput[] | ConversationWhereInput;
+  NOT?: ConversationWhereInput[] | ConversationWhereInput;
+}
+
+export interface PostCreateManyWithoutAuthorInput {
+  create?: PostCreateWithoutAuthorInput[] | PostCreateWithoutAuthorInput;
+  connect?: PostWhereUniqueInput[] | PostWhereUniqueInput;
+}
+
+export interface GroupUpdateWithoutConversationDataInput {
+  name?: String;
+}
+
+export interface NotificationCreateManyWithoutUserInput {
+  create?:
+    | NotificationCreateWithoutUserInput[]
+    | NotificationCreateWithoutUserInput;
+  connect?: NotificationWhereUniqueInput[] | NotificationWhereUniqueInput;
+}
+
+export interface GroupUpsertWithoutConversationInput {
+  update: GroupUpdateWithoutConversationDataInput;
+  create: GroupCreateWithoutConversationInput;
+}
+
+export interface ConversationCreateManyWithoutUser2Input {
+  create?:
+    | ConversationCreateWithoutUser2Input[]
+    | ConversationCreateWithoutUser2Input;
+  connect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
 }
 
 export interface MessageUpdateManyWithoutConversationInput {
@@ -1293,18 +1096,22 @@ export interface MessageUpdateManyWithoutConversationInput {
     | MessageUpdateManyWithWhereNestedInput;
 }
 
-export type MessageWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface GroupCreateOneWithoutConversationInput {
+  create?: GroupCreateWithoutConversationInput;
+  connect?: GroupWhereUniqueInput;
+}
 
 export interface MessageUpdateWithWhereUniqueWithoutConversationInput {
   where: MessageWhereUniqueInput;
   data: MessageUpdateWithoutConversationDataInput;
 }
 
-export type NotificationWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface MessageCreateManyWithoutConversationInput {
+  create?:
+    | MessageCreateWithoutConversationInput[]
+    | MessageCreateWithoutConversationInput;
+  connect?: MessageWhereUniqueInput[] | MessageWhereUniqueInput;
+}
 
 export interface MessageUpdateWithoutConversationDataInput {
   message?: String;
@@ -1313,19 +1120,50 @@ export interface MessageUpdateWithoutConversationDataInput {
   isDeleted?: Boolean;
 }
 
-export type PostWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface MessageCreateattachedInput {
+  set?: String[] | String;
+}
 
 export interface MessageUpdateattachedInput {
   set?: String[] | String;
 }
 
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  email?: String;
-  username?: String;
-}>;
+export interface GroupWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  conversation_every?: ConversationWhereInput;
+  conversation_some?: ConversationWhereInput;
+  conversation_none?: ConversationWhereInput;
+  AND?: GroupWhereInput[] | GroupWhereInput;
+  OR?: GroupWhereInput[] | GroupWhereInput;
+  NOT?: GroupWhereInput[] | GroupWhereInput;
+}
 
 export interface MessageUpsertWithWhereUniqueWithoutConversationInput {
   where: MessageWhereUniqueInput;
@@ -1333,11 +1171,15 @@ export interface MessageUpsertWithWhereUniqueWithoutConversationInput {
   create: MessageCreateWithoutConversationInput;
 }
 
-export interface MessageUpdateManyMutationInput {
-  message?: String;
-  attached?: MessageUpdateattachedInput;
-  isSeen?: Boolean;
-  isDeleted?: Boolean;
+export interface PostSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: PostWhereInput;
+  AND?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput;
+  OR?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput;
+  NOT?: PostSubscriptionWhereInput[] | PostSubscriptionWhereInput;
 }
 
 export interface MessageScalarWhereInput {
@@ -1394,11 +1236,15 @@ export interface MessageScalarWhereInput {
   NOT?: MessageScalarWhereInput[] | MessageScalarWhereInput;
 }
 
-export interface ConversationUpdateOneRequiredWithoutMessageInput {
-  create?: ConversationCreateWithoutMessageInput;
-  update?: ConversationUpdateWithoutMessageDataInput;
-  upsert?: ConversationUpsertWithoutMessageInput;
-  connect?: ConversationWhereUniqueInput;
+export interface MessageSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: MessageWhereInput;
+  AND?: MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput;
+  OR?: MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput;
+  NOT?: MessageSubscriptionWhereInput[] | MessageSubscriptionWhereInput;
 }
 
 export interface MessageUpdateManyWithWhereNestedInput {
@@ -1406,16 +1252,16 @@ export interface MessageUpdateManyWithWhereNestedInput {
   data: MessageUpdateManyDataInput;
 }
 
-export interface UserCreateInput {
-  firstName: String;
-  lastName: String;
-  email: String;
-  password: String;
-  username: String;
+export interface UserUpdateInput {
+  firstName?: String;
+  lastName?: String;
+  email?: String;
+  password?: String;
+  username?: String;
   isActive?: Boolean;
-  posts?: PostCreateManyWithoutAuthorInput;
-  notifications?: NotificationCreateManyWithoutUserInput;
-  user2?: User2CreateManyWithoutUserInput;
+  posts?: PostUpdateManyWithoutAuthorInput;
+  notifications?: NotificationUpdateManyWithoutUserInput;
+  conversation?: ConversationUpdateManyWithoutUser2Input;
 }
 
 export interface MessageUpdateManyDataInput {
@@ -1423,60 +1269,6 @@ export interface MessageUpdateManyDataInput {
   attached?: MessageUpdateattachedInput;
   isSeen?: Boolean;
   isDeleted?: Boolean;
-}
-
-export interface NotificationCreateWithoutUserInput {
-  type: Int;
-  title?: String;
-}
-
-export interface ConversationUpdateManyMutationInput {
-  startedAt?: DateTimeInput;
-}
-
-export interface User2CreateOneInput {
-  create?: User2CreateInput;
-  connect?: User2WhereUniqueInput;
-}
-
-export interface ConversationCreateOneWithoutMessageInput {
-  create?: ConversationCreateWithoutMessageInput;
-  connect?: ConversationWhereUniqueInput;
-}
-
-export interface UserSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-}
-
-export interface MessageCreateInput {
-  message?: String;
-  attached?: MessageCreateattachedInput;
-  isSeen?: Boolean;
-  isDeleted?: Boolean;
-  conversation: ConversationCreateOneWithoutMessageInput;
-}
-
-export interface GroupSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: GroupWhereInput;
-  AND?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
-  OR?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
-  NOT?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
-}
-
-export interface GroupCreateInput {
-  name?: String;
-  conversation?: ConversationCreateManyWithoutGroupInput;
 }
 
 export interface UserUpdateWithoutPostsDataInput {
@@ -1487,156 +1279,18 @@ export interface UserUpdateWithoutPostsDataInput {
   username?: String;
   isActive?: Boolean;
   notifications?: NotificationUpdateManyWithoutUserInput;
-  user2?: User2UpdateManyWithoutUserInput;
+  conversation?: ConversationUpdateManyWithoutUser2Input;
 }
 
-export interface ConversationCreateManyWithoutGroupInput {
-  create?:
-    | ConversationCreateWithoutGroupInput[]
-    | ConversationCreateWithoutGroupInput;
-  connect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
-}
-
-export interface NotificationUpdateManyMutationInput {
-  type?: Int;
-  title?: String;
-}
-
-export interface ConversationCreateWithoutGroupInput {
-  user: UserCreateOneInput;
-  user2?: User2CreateOneInput;
-  message?: MessageCreateManyWithoutConversationInput;
-  startedAt: DateTimeInput;
-}
-
-export interface UserCreateOneWithoutNotificationsInput {
-  create?: UserCreateWithoutNotificationsInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface GroupUpdateInput {
-  name?: String;
-  conversation?: ConversationUpdateManyWithoutGroupInput;
-}
-
-export interface ConversationCreateInput {
-  user: UserCreateOneInput;
-  group?: GroupCreateOneWithoutConversationInput;
-  user2?: User2CreateOneInput;
-  message?: MessageCreateManyWithoutConversationInput;
-  startedAt: DateTimeInput;
-}
-
-export interface ConversationUpdateManyWithoutGroupInput {
-  create?:
-    | ConversationCreateWithoutGroupInput[]
-    | ConversationCreateWithoutGroupInput;
-  delete?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
-  connect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
-  disconnect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
-  update?:
-    | ConversationUpdateWithWhereUniqueWithoutGroupInput[]
-    | ConversationUpdateWithWhereUniqueWithoutGroupInput;
-  upsert?:
-    | ConversationUpsertWithWhereUniqueWithoutGroupInput[]
-    | ConversationUpsertWithWhereUniqueWithoutGroupInput;
-  deleteMany?: ConversationScalarWhereInput[] | ConversationScalarWhereInput;
-  updateMany?:
-    | ConversationUpdateManyWithWhereNestedInput[]
-    | ConversationUpdateManyWithWhereNestedInput;
-}
-
-export interface GroupCreateOneWithoutConversationInput {
-  create?: GroupCreateWithoutConversationInput;
-  connect?: GroupWhereUniqueInput;
-}
-
-export interface ConversationUpdateWithWhereUniqueWithoutGroupInput {
+export interface ConversationUpsertWithWhereUniqueWithoutUser2Input {
   where: ConversationWhereUniqueInput;
-  data: ConversationUpdateWithoutGroupDataInput;
+  update: ConversationUpdateWithoutUser2DataInput;
+  create: ConversationCreateWithoutUser2Input;
 }
 
-export interface MessageWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  message?: String;
-  message_not?: String;
-  message_in?: String[] | String;
-  message_not_in?: String[] | String;
-  message_lt?: String;
-  message_lte?: String;
-  message_gt?: String;
-  message_gte?: String;
-  message_contains?: String;
-  message_not_contains?: String;
-  message_starts_with?: String;
-  message_not_starts_with?: String;
-  message_ends_with?: String;
-  message_not_ends_with?: String;
-  isSeen?: Boolean;
-  isSeen_not?: Boolean;
-  isDeleted?: Boolean;
-  isDeleted_not?: Boolean;
-  createdAt?: DateTimeInput;
-  createdAt_not?: DateTimeInput;
-  createdAt_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_not_in?: DateTimeInput[] | DateTimeInput;
-  createdAt_lt?: DateTimeInput;
-  createdAt_lte?: DateTimeInput;
-  createdAt_gt?: DateTimeInput;
-  createdAt_gte?: DateTimeInput;
-  updatedAt?: DateTimeInput;
-  updatedAt_not?: DateTimeInput;
-  updatedAt_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
-  updatedAt_lt?: DateTimeInput;
-  updatedAt_lte?: DateTimeInput;
-  updatedAt_gt?: DateTimeInput;
-  updatedAt_gte?: DateTimeInput;
-  conversation?: ConversationWhereInput;
-  AND?: MessageWhereInput[] | MessageWhereInput;
-  OR?: MessageWhereInput[] | MessageWhereInput;
-  NOT?: MessageWhereInput[] | MessageWhereInput;
-}
-
-export interface ConversationUpdateWithoutGroupDataInput {
-  user?: UserUpdateOneRequiredInput;
-  user2?: User2UpdateOneInput;
-  message?: MessageUpdateManyWithoutConversationInput;
-  startedAt?: DateTimeInput;
-}
-
-export interface UserCreateWithoutPostsInput {
-  firstName: String;
-  lastName: String;
-  email: String;
-  password: String;
-  username: String;
-  isActive?: Boolean;
-  notifications?: NotificationCreateManyWithoutUserInput;
-  user2?: User2CreateManyWithoutUserInput;
-}
-
-export interface ConversationUpdateManyDataInput {
-  startedAt?: DateTimeInput;
-}
-
-export interface ConversationUpdateManyWithWhereNestedInput {
-  where: ConversationScalarWhereInput;
-  data: ConversationUpdateManyDataInput;
-}
+export type MessageWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface ConversationScalarWhereInput {
   id?: ID_Input;
@@ -1674,20 +1328,61 @@ export interface ConversationScalarWhereInput {
   NOT?: ConversationScalarWhereInput[] | ConversationScalarWhereInput;
 }
 
-export interface ConversationUpsertWithWhereUniqueWithoutGroupInput {
-  where: ConversationWhereUniqueInput;
-  update: ConversationUpdateWithoutGroupDataInput;
-  create: ConversationCreateWithoutGroupInput;
+export type NotificationWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ConversationUpdateManyWithWhereNestedInput {
+  where: ConversationScalarWhereInput;
+  data: ConversationUpdateManyDataInput;
 }
 
-export interface UserUpdateOneRequiredWithoutNotificationsInput {
-  create?: UserCreateWithoutNotificationsInput;
-  update?: UserUpdateWithoutNotificationsDataInput;
-  upsert?: UserUpsertWithoutNotificationsInput;
+export type PostWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ConversationUpdateManyDataInput {
+  startedAt?: DateTimeInput;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  email?: String;
+  username?: String;
+}>;
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface ConversationUpdateWithoutMessageDataInput {
+  user?: UserUpdateOneRequiredInput;
+  group?: GroupUpdateOneWithoutConversationInput;
+  user2?: UserUpdateOneRequiredWithoutConversationInput;
+  startedAt?: DateTimeInput;
+}
+
+export interface UserUpdateOneRequiredWithoutConversationInput {
+  create?: UserCreateWithoutConversationInput;
+  update?: UserUpdateWithoutConversationDataInput;
+  upsert?: UserUpsertWithoutConversationInput;
   connect?: UserWhereUniqueInput;
 }
 
-export interface UserUpdateInput {
+export interface UserCreateInput {
+  firstName: String;
+  lastName: String;
+  email: String;
+  password: String;
+  username: String;
+  isActive?: Boolean;
+  posts?: PostCreateManyWithoutAuthorInput;
+  notifications?: NotificationCreateManyWithoutUserInput;
+  conversation?: ConversationCreateManyWithoutUser2Input;
+}
+
+export interface UserUpdateWithoutConversationDataInput {
   firstName?: String;
   lastName?: String;
   email?: String;
@@ -1696,12 +1391,225 @@ export interface UserUpdateInput {
   isActive?: Boolean;
   posts?: PostUpdateManyWithoutAuthorInput;
   notifications?: NotificationUpdateManyWithoutUserInput;
-  user2?: User2UpdateManyWithoutUserInput;
 }
 
-export interface UserCreateOneWithoutUser2Input {
-  create?: UserCreateWithoutUser2Input;
+export interface NotificationCreateWithoutUserInput {
+  type: Int;
+  title?: String;
+}
+
+export interface UserUpsertWithoutConversationInput {
+  update: UserUpdateWithoutConversationDataInput;
+  create: UserCreateWithoutConversationInput;
+}
+
+export interface GroupCreateWithoutConversationInput {
+  name?: String;
+}
+
+export interface ConversationUpdateManyMutationInput {
+  startedAt?: DateTimeInput;
+}
+
+export interface UserCreateOneWithoutConversationInput {
+  create?: UserCreateWithoutConversationInput;
   connect?: UserWhereUniqueInput;
+}
+
+export interface MessageUpdateInput {
+  message?: String;
+  attached?: MessageUpdateattachedInput;
+  isSeen?: Boolean;
+  isDeleted?: Boolean;
+  conversation?: ConversationUpdateOneRequiredWithoutMessageInput;
+}
+
+export interface NotificationSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: NotificationWhereInput;
+  AND?:
+    | NotificationSubscriptionWhereInput[]
+    | NotificationSubscriptionWhereInput;
+  OR?:
+    | NotificationSubscriptionWhereInput[]
+    | NotificationSubscriptionWhereInput;
+  NOT?:
+    | NotificationSubscriptionWhereInput[]
+    | NotificationSubscriptionWhereInput;
+}
+
+export interface ConversationCreateWithoutMessageInput {
+  user: UserCreateOneInput;
+  group?: GroupCreateOneWithoutConversationInput;
+  user2: UserCreateOneWithoutConversationInput;
+  startedAt: DateTimeInput;
+}
+
+export interface UserUpsertWithoutPostsInput {
+  update: UserUpdateWithoutPostsDataInput;
+  create: UserCreateWithoutPostsInput;
+}
+
+export interface GroupCreateInput {
+  name?: String;
+  conversation?: ConversationCreateManyWithoutGroupInput;
+}
+
+export interface PostCreateInput {
+  title: String;
+  targets?: String;
+  published?: Boolean;
+  author: UserCreateOneWithoutPostsInput;
+}
+
+export interface ConversationCreateManyWithoutGroupInput {
+  create?:
+    | ConversationCreateWithoutGroupInput[]
+    | ConversationCreateWithoutGroupInput;
+  connect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
+}
+
+export interface UserCreateWithoutNotificationsInput {
+  firstName: String;
+  lastName: String;
+  email: String;
+  password: String;
+  username: String;
+  isActive?: Boolean;
+  posts?: PostCreateManyWithoutAuthorInput;
+  conversation?: ConversationCreateManyWithoutUser2Input;
+}
+
+export interface ConversationCreateWithoutGroupInput {
+  user: UserCreateOneInput;
+  user2: UserCreateOneWithoutConversationInput;
+  message?: MessageCreateManyWithoutConversationInput;
+  startedAt: DateTimeInput;
+}
+
+export interface ConversationCreateInput {
+  user: UserCreateOneInput;
+  group?: GroupCreateOneWithoutConversationInput;
+  user2: UserCreateOneWithoutConversationInput;
+  message?: MessageCreateManyWithoutConversationInput;
+  startedAt: DateTimeInput;
+}
+
+export interface GroupUpdateInput {
+  name?: String;
+  conversation?: ConversationUpdateManyWithoutGroupInput;
+}
+
+export interface ConversationCreateWithoutUser2Input {
+  user: UserCreateOneInput;
+  group?: GroupCreateOneWithoutConversationInput;
+  message?: MessageCreateManyWithoutConversationInput;
+  startedAt: DateTimeInput;
+}
+
+export interface ConversationUpdateManyWithoutGroupInput {
+  create?:
+    | ConversationCreateWithoutGroupInput[]
+    | ConversationCreateWithoutGroupInput;
+  delete?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
+  connect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
+  disconnect?: ConversationWhereUniqueInput[] | ConversationWhereUniqueInput;
+  update?:
+    | ConversationUpdateWithWhereUniqueWithoutGroupInput[]
+    | ConversationUpdateWithWhereUniqueWithoutGroupInput;
+  upsert?:
+    | ConversationUpsertWithWhereUniqueWithoutGroupInput[]
+    | ConversationUpsertWithWhereUniqueWithoutGroupInput;
+  deleteMany?: ConversationScalarWhereInput[] | ConversationScalarWhereInput;
+  updateMany?:
+    | ConversationUpdateManyWithWhereNestedInput[]
+    | ConversationUpdateManyWithWhereNestedInput;
+}
+
+export interface UserSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+}
+
+export interface ConversationUpdateWithWhereUniqueWithoutGroupInput {
+  where: ConversationWhereUniqueInput;
+  data: ConversationUpdateWithoutGroupDataInput;
+}
+
+export interface PostUpdateInput {
+  title?: String;
+  targets?: String;
+  published?: Boolean;
+  author?: UserUpdateOneRequiredWithoutPostsInput;
+}
+
+export interface MessageCreateInput {
+  message?: String;
+  attached?: MessageCreateattachedInput;
+  isSeen?: Boolean;
+  isDeleted?: Boolean;
+  conversation: ConversationCreateOneWithoutMessageInput;
+}
+
+export interface GroupUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface ConversationUpsertWithWhereUniqueWithoutGroupInput {
+  where: ConversationWhereUniqueInput;
+  update: ConversationUpdateWithoutGroupDataInput;
+  create: ConversationCreateWithoutGroupInput;
+}
+
+export interface ConversationUpdateWithoutGroupDataInput {
+  user?: UserUpdateOneRequiredInput;
+  user2?: UserUpdateOneRequiredWithoutConversationInput;
+  message?: MessageUpdateManyWithoutConversationInput;
+  startedAt?: DateTimeInput;
+}
+
+export interface UserUpdateWithoutNotificationsDataInput {
+  firstName?: String;
+  lastName?: String;
+  email?: String;
+  password?: String;
+  username?: String;
+  isActive?: Boolean;
+  posts?: PostUpdateManyWithoutAuthorInput;
+  conversation?: ConversationUpdateManyWithoutUser2Input;
+}
+
+export interface ConversationSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ConversationWhereInput;
+  AND?:
+    | ConversationSubscriptionWhereInput[]
+    | ConversationSubscriptionWhereInput;
+  OR?:
+    | ConversationSubscriptionWhereInput[]
+    | ConversationSubscriptionWhereInput;
+  NOT?:
+    | ConversationSubscriptionWhereInput[]
+    | ConversationSubscriptionWhereInput;
+}
+
+export interface MessageCreateWithoutConversationInput {
+  message?: String;
+  attached?: MessageCreateattachedInput;
+  isSeen?: Boolean;
+  isDeleted?: Boolean;
 }
 
 export interface PostCreateWithoutAuthorInput {
@@ -1710,549 +1618,15 @@ export interface PostCreateWithoutAuthorInput {
   published?: Boolean;
 }
 
-export interface ConversationUpsertWithoutMessageInput {
-  update: ConversationUpdateWithoutMessageDataInput;
-  create: ConversationCreateWithoutMessageInput;
+export interface MessageUpdateManyMutationInput {
+  message?: String;
+  attached?: MessageUpdateattachedInput;
+  isSeen?: Boolean;
+  isDeleted?: Boolean;
 }
 
 export interface NodeNode {
   id: ID_Output;
-}
-
-export interface User2PreviousValues {
-  id: ID_Output;
-}
-
-export interface User2PreviousValuesPromise
-  extends Promise<User2PreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-}
-
-export interface User2PreviousValuesSubscription
-  extends Promise<AsyncIterator<User2PreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-}
-
-export interface AggregateConversation {
-  count: Int;
-}
-
-export interface AggregateConversationPromise
-  extends Promise<AggregateConversation>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateConversationSubscription
-  extends Promise<AsyncIterator<AggregateConversation>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface Post {
-  id: ID_Output;
-  title: String;
-  targets?: String;
-  published: Boolean;
-}
-
-export interface PostPromise extends Promise<Post>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  title: () => Promise<String>;
-  targets: () => Promise<String>;
-  published: () => Promise<Boolean>;
-  author: <T = UserPromise>() => T;
-}
-
-export interface PostSubscription
-  extends Promise<AsyncIterator<Post>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  title: () => Promise<AsyncIterator<String>>;
-  targets: () => Promise<AsyncIterator<String>>;
-  published: () => Promise<AsyncIterator<Boolean>>;
-  author: <T = UserSubscription>() => T;
-}
-
-export interface User2SubscriptionPayload {
-  mutation: MutationType;
-  node: User2;
-  updatedFields: String[];
-  previousValues: User2PreviousValues;
-}
-
-export interface User2SubscriptionPayloadPromise
-  extends Promise<User2SubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = User2Promise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = User2PreviousValuesPromise>() => T;
-}
-
-export interface User2SubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<User2SubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = User2Subscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = User2PreviousValuesSubscription>() => T;
-}
-
-export interface User2 {
-  id: ID_Output;
-}
-
-export interface User2Promise extends Promise<User2>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  user: <T = UserPromise>() => T;
-}
-
-export interface User2Subscription
-  extends Promise<AsyncIterator<User2>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  user: <T = UserSubscription>() => T;
-}
-
-export interface BatchPayload {
-  count: Long;
-}
-
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
-    Fragmentable {
-  count: () => Promise<Long>;
-}
-
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
-}
-
-export interface ConversationEdge {
-  node: Conversation;
-  cursor: String;
-}
-
-export interface ConversationEdgePromise
-  extends Promise<ConversationEdge>,
-    Fragmentable {
-  node: <T = ConversationPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ConversationEdgeSubscription
-  extends Promise<AsyncIterator<ConversationEdge>>,
-    Fragmentable {
-  node: <T = ConversationSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface Notification {
-  id: ID_Output;
-  type: Int;
-  title?: String;
-}
-
-export interface NotificationPromise
-  extends Promise<Notification>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  type: () => Promise<Int>;
-  title: () => Promise<String>;
-  user: <T = UserPromise>() => T;
-}
-
-export interface NotificationSubscription
-  extends Promise<AsyncIterator<Notification>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  type: () => Promise<AsyncIterator<Int>>;
-  title: () => Promise<AsyncIterator<String>>;
-  user: <T = UserSubscription>() => T;
-}
-
-export interface User2Edge {
-  node: User2;
-  cursor: String;
-}
-
-export interface User2EdgePromise extends Promise<User2Edge>, Fragmentable {
-  node: <T = User2Promise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface User2EdgeSubscription
-  extends Promise<AsyncIterator<User2Edge>>,
-    Fragmentable {
-  node: <T = User2Subscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateUser {
-  count: Int;
-}
-
-export interface AggregateUserPromise
-  extends Promise<AggregateUser>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUser>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ConversationConnection {
-  pageInfo: PageInfo;
-  edges: ConversationEdge[];
-}
-
-export interface ConversationConnectionPromise
-  extends Promise<ConversationConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ConversationEdge>>() => T;
-  aggregate: <T = AggregateConversationPromise>() => T;
-}
-
-export interface ConversationConnectionSubscription
-  extends Promise<AsyncIterator<ConversationConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ConversationEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateConversationSubscription>() => T;
-}
-
-export interface UserConnection {
-  pageInfo: PageInfo;
-  edges: UserEdge[];
-}
-
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
-}
-
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
-}
-
-export interface Conversation {
-  id: ID_Output;
-  startedAt: DateTimeOutput;
-  createdAt: DateTimeOutput;
-}
-
-export interface ConversationPromise
-  extends Promise<Conversation>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  user: <T = UserPromise>() => T;
-  group: <T = GroupPromise>() => T;
-  user2: <T = User2Promise>() => T;
-  message: <T = FragmentableArray<Message>>(args?: {
-    where?: MessageWhereInput;
-    orderBy?: MessageOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  startedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-}
-
-export interface ConversationSubscription
-  extends Promise<AsyncIterator<Conversation>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  user: <T = UserSubscription>() => T;
-  group: <T = GroupSubscription>() => T;
-  user2: <T = User2Subscription>() => T;
-  message: <T = Promise<AsyncIterator<MessageSubscription>>>(args?: {
-    where?: MessageWhereInput;
-    orderBy?: MessageOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  startedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface AggregatePost {
-  count: Int;
-}
-
-export interface AggregatePostPromise
-  extends Promise<AggregatePost>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregatePostSubscription
-  extends Promise<AsyncIterator<AggregatePost>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ConversationSubscriptionPayload {
-  mutation: MutationType;
-  node: Conversation;
-  updatedFields: String[];
-  previousValues: ConversationPreviousValues;
-}
-
-export interface ConversationSubscriptionPayloadPromise
-  extends Promise<ConversationSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = ConversationPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ConversationPreviousValuesPromise>() => T;
-}
-
-export interface ConversationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ConversationSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ConversationSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ConversationPreviousValuesSubscription>() => T;
-}
-
-export interface PostConnection {
-  pageInfo: PageInfo;
-  edges: PostEdge[];
-}
-
-export interface PostConnectionPromise
-  extends Promise<PostConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<PostEdge>>() => T;
-  aggregate: <T = AggregatePostPromise>() => T;
-}
-
-export interface PostConnectionSubscription
-  extends Promise<AsyncIterator<PostConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<PostEdgeSubscription>>>() => T;
-  aggregate: <T = AggregatePostSubscription>() => T;
-}
-
-export interface ConversationPreviousValues {
-  id: ID_Output;
-  startedAt: DateTimeOutput;
-  createdAt: DateTimeOutput;
-}
-
-export interface ConversationPreviousValuesPromise
-  extends Promise<ConversationPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  startedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-}
-
-export interface ConversationPreviousValuesSubscription
-  extends Promise<AsyncIterator<ConversationPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  startedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface NotificationEdge {
-  node: Notification;
-  cursor: String;
-}
-
-export interface NotificationEdgePromise
-  extends Promise<NotificationEdge>,
-    Fragmentable {
-  node: <T = NotificationPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface NotificationEdgeSubscription
-  extends Promise<AsyncIterator<NotificationEdge>>,
-    Fragmentable {
-  node: <T = NotificationSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface Message {
-  id: ID_Output;
-  message?: String;
-  attached: String[];
-  isSeen: Boolean;
-  isDeleted: Boolean;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface MessagePromise extends Promise<Message>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  message: () => Promise<String>;
-  attached: () => Promise<String[]>;
-  isSeen: () => Promise<Boolean>;
-  isDeleted: () => Promise<Boolean>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  conversation: <T = ConversationPromise>() => T;
-}
-
-export interface MessageSubscription
-  extends Promise<AsyncIterator<Message>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  message: () => Promise<AsyncIterator<String>>;
-  attached: () => Promise<AsyncIterator<String[]>>;
-  isSeen: () => Promise<AsyncIterator<Boolean>>;
-  isDeleted: () => Promise<AsyncIterator<Boolean>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  conversation: <T = ConversationSubscription>() => T;
-}
-
-export interface AggregateMessage {
-  count: Int;
-}
-
-export interface AggregateMessagePromise
-  extends Promise<AggregateMessage>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateMessageSubscription
-  extends Promise<AsyncIterator<AggregateMessage>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface GroupSubscriptionPayload {
-  mutation: MutationType;
-  node: Group;
-  updatedFields: String[];
-  previousValues: GroupPreviousValues;
-}
-
-export interface GroupSubscriptionPayloadPromise
-  extends Promise<GroupSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = GroupPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = GroupPreviousValuesPromise>() => T;
-}
-
-export interface GroupSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<GroupSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = GroupSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = GroupPreviousValuesSubscription>() => T;
-}
-
-export interface MessageConnection {
-  pageInfo: PageInfo;
-  edges: MessageEdge[];
-}
-
-export interface MessageConnectionPromise
-  extends Promise<MessageConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<MessageEdge>>() => T;
-  aggregate: <T = AggregateMessagePromise>() => T;
-}
-
-export interface MessageConnectionSubscription
-  extends Promise<AsyncIterator<MessageConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<MessageEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateMessageSubscription>() => T;
-}
-
-export interface GroupPreviousValues {
-  id: ID_Output;
-  name?: String;
-}
-
-export interface GroupPreviousValuesPromise
-  extends Promise<GroupPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-}
-
-export interface GroupPreviousValuesSubscription
-  extends Promise<AsyncIterator<GroupPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-}
-
-export interface GroupEdge {
-  node: Group;
-  cursor: String;
-}
-
-export interface GroupEdgePromise extends Promise<GroupEdge>, Fragmentable {
-  node: <T = GroupPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface GroupEdgeSubscription
-  extends Promise<AsyncIterator<GroupEdge>>,
-    Fragmentable {
-  node: <T = GroupSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UserPreviousValues {
@@ -2289,223 +1663,6 @@ export interface UserPreviousValuesSubscription
   isActive: () => Promise<AsyncIterator<Boolean>>;
 }
 
-export interface AggregateUser2 {
-  count: Int;
-}
-
-export interface AggregateUser2Promise
-  extends Promise<AggregateUser2>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUser2Subscription
-  extends Promise<AsyncIterator<AggregateUser2>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface MessageSubscriptionPayload {
-  mutation: MutationType;
-  node: Message;
-  updatedFields: String[];
-  previousValues: MessagePreviousValues;
-}
-
-export interface MessageSubscriptionPayloadPromise
-  extends Promise<MessageSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = MessagePromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = MessagePreviousValuesPromise>() => T;
-}
-
-export interface MessageSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<MessageSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = MessageSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = MessagePreviousValuesSubscription>() => T;
-}
-
-export interface UserEdge {
-  node: User;
-  cursor: String;
-}
-
-export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
-  node: <T = UserPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdge>>,
-    Fragmentable {
-  node: <T = UserSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface MessagePreviousValues {
-  id: ID_Output;
-  message?: String;
-  attached: String[];
-  isSeen: Boolean;
-  isDeleted: Boolean;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface MessagePreviousValuesPromise
-  extends Promise<MessagePreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  message: () => Promise<String>;
-  attached: () => Promise<String[]>;
-  isSeen: () => Promise<Boolean>;
-  isDeleted: () => Promise<Boolean>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface MessagePreviousValuesSubscription
-  extends Promise<AsyncIterator<MessagePreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  message: () => Promise<AsyncIterator<String>>;
-  attached: () => Promise<AsyncIterator<String[]>>;
-  isSeen: () => Promise<AsyncIterator<Boolean>>;
-  isDeleted: () => Promise<AsyncIterator<Boolean>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface PostEdge {
-  node: Post;
-  cursor: String;
-}
-
-export interface PostEdgePromise extends Promise<PostEdge>, Fragmentable {
-  node: <T = PostPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface PostEdgeSubscription
-  extends Promise<AsyncIterator<PostEdge>>,
-    Fragmentable {
-  node: <T = PostSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserSubscriptionPayload {
-  mutation: MutationType;
-  node: User;
-  updatedFields: String[];
-  previousValues: UserPreviousValues;
-}
-
-export interface UserSubscriptionPayloadPromise
-  extends Promise<UserSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = UserPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserPreviousValuesPromise>() => T;
-}
-
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserPreviousValuesSubscription>() => T;
-}
-
-export interface NotificationConnection {
-  pageInfo: PageInfo;
-  edges: NotificationEdge[];
-}
-
-export interface NotificationConnectionPromise
-  extends Promise<NotificationConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<NotificationEdge>>() => T;
-  aggregate: <T = AggregateNotificationPromise>() => T;
-}
-
-export interface NotificationConnectionSubscription
-  extends Promise<AsyncIterator<NotificationConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<NotificationEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateNotificationSubscription>() => T;
-}
-
-export interface NotificationSubscriptionPayload {
-  mutation: MutationType;
-  node: Notification;
-  updatedFields: String[];
-  previousValues: NotificationPreviousValues;
-}
-
-export interface NotificationSubscriptionPayloadPromise
-  extends Promise<NotificationSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = NotificationPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = NotificationPreviousValuesPromise>() => T;
-}
-
-export interface NotificationSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<NotificationSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = NotificationSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = NotificationPreviousValuesSubscription>() => T;
-}
-
-export interface AggregateGroup {
-  count: Int;
-}
-
-export interface AggregateGroupPromise
-  extends Promise<AggregateGroup>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateGroupSubscription
-  extends Promise<AsyncIterator<AggregateGroup>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface User2Connection {
-  pageInfo: PageInfo;
-  edges: User2Edge[];
-}
-
-export interface User2ConnectionPromise
-  extends Promise<User2Connection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<User2Edge>>() => T;
-  aggregate: <T = AggregateUser2Promise>() => T;
-}
-
-export interface User2ConnectionSubscription
-  extends Promise<AsyncIterator<User2Connection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<User2EdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUser2Subscription>() => T;
-}
-
 export interface PostPreviousValues {
   id: ID_Output;
   title: String;
@@ -2529,6 +1686,383 @@ export interface PostPreviousValuesSubscription
   title: () => Promise<AsyncIterator<String>>;
   targets: () => Promise<AsyncIterator<String>>;
   published: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface Post {
+  id: ID_Output;
+  title: String;
+  targets?: String;
+  published: Boolean;
+}
+
+export interface PostPromise extends Promise<Post>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  targets: () => Promise<String>;
+  published: () => Promise<Boolean>;
+  author: <T = UserPromise>() => T;
+}
+
+export interface PostSubscription
+  extends Promise<AsyncIterator<Post>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  title: () => Promise<AsyncIterator<String>>;
+  targets: () => Promise<AsyncIterator<String>>;
+  published: () => Promise<AsyncIterator<Boolean>>;
+  author: <T = UserSubscription>() => T;
+}
+
+export interface AggregateConversation {
+  count: Int;
+}
+
+export interface AggregateConversationPromise
+  extends Promise<AggregateConversation>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateConversationSubscription
+  extends Promise<AsyncIterator<AggregateConversation>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ConversationEdge {
+  node: Conversation;
+  cursor: String;
+}
+
+export interface ConversationEdgePromise
+  extends Promise<ConversationEdge>,
+    Fragmentable {
+  node: <T = ConversationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ConversationEdgeSubscription
+  extends Promise<AsyncIterator<ConversationEdge>>,
+    Fragmentable {
+  node: <T = ConversationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface AggregateUser {
+  count: Int;
+}
+
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
+}
+
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
+}
+
+export interface ConversationConnection {
+  pageInfo: PageInfo;
+  edges: ConversationEdge[];
+}
+
+export interface ConversationConnectionPromise
+  extends Promise<ConversationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ConversationEdge>>() => T;
+  aggregate: <T = AggregateConversationPromise>() => T;
+}
+
+export interface ConversationConnectionSubscription
+  extends Promise<AsyncIterator<ConversationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ConversationEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateConversationSubscription>() => T;
+}
+
+export interface AggregatePost {
+  count: Int;
+}
+
+export interface AggregatePostPromise
+  extends Promise<AggregatePost>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePostSubscription
+  extends Promise<AsyncIterator<AggregatePost>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Message {
+  id: ID_Output;
+  message?: String;
+  attached: String[];
+  isSeen: Boolean;
+  isDeleted: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface MessagePromise extends Promise<Message>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  message: () => Promise<String>;
+  attached: () => Promise<String[]>;
+  isSeen: () => Promise<Boolean>;
+  isDeleted: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  conversation: <T = ConversationPromise>() => T;
+}
+
+export interface MessageSubscription
+  extends Promise<AsyncIterator<Message>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  message: () => Promise<AsyncIterator<String>>;
+  attached: () => Promise<AsyncIterator<String[]>>;
+  isSeen: () => Promise<AsyncIterator<Boolean>>;
+  isDeleted: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  conversation: <T = ConversationSubscription>() => T;
+}
+
+export interface PostConnection {
+  pageInfo: PageInfo;
+  edges: PostEdge[];
+}
+
+export interface PostConnectionPromise
+  extends Promise<PostConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PostEdge>>() => T;
+  aggregate: <T = AggregatePostPromise>() => T;
+}
+
+export interface PostConnectionSubscription
+  extends Promise<AsyncIterator<PostConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PostEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePostSubscription>() => T;
+}
+
+export interface Conversation {
+  id: ID_Output;
+  startedAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+}
+
+export interface ConversationPromise
+  extends Promise<Conversation>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  user: <T = UserPromise>() => T;
+  group: <T = GroupPromise>() => T;
+  user2: <T = UserPromise>() => T;
+  message: <T = FragmentableArray<Message>>(args?: {
+    where?: MessageWhereInput;
+    orderBy?: MessageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  startedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ConversationSubscription
+  extends Promise<AsyncIterator<Conversation>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  user: <T = UserSubscription>() => T;
+  group: <T = GroupSubscription>() => T;
+  user2: <T = UserSubscription>() => T;
+  message: <T = Promise<AsyncIterator<MessageSubscription>>>(args?: {
+    where?: MessageWhereInput;
+    orderBy?: MessageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  startedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface NotificationEdge {
+  node: Notification;
+  cursor: String;
+}
+
+export interface NotificationEdgePromise
+  extends Promise<NotificationEdge>,
+    Fragmentable {
+  node: <T = NotificationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface NotificationEdgeSubscription
+  extends Promise<AsyncIterator<NotificationEdge>>,
+    Fragmentable {
+  node: <T = NotificationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ConversationSubscriptionPayload {
+  mutation: MutationType;
+  node: Conversation;
+  updatedFields: String[];
+  previousValues: ConversationPreviousValues;
+}
+
+export interface ConversationSubscriptionPayloadPromise
+  extends Promise<ConversationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ConversationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ConversationPreviousValuesPromise>() => T;
+}
+
+export interface ConversationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ConversationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ConversationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ConversationPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateMessage {
+  count: Int;
+}
+
+export interface AggregateMessagePromise
+  extends Promise<AggregateMessage>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateMessageSubscription
+  extends Promise<AsyncIterator<AggregateMessage>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ConversationPreviousValues {
+  id: ID_Output;
+  startedAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+}
+
+export interface ConversationPreviousValuesPromise
+  extends Promise<ConversationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  startedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ConversationPreviousValuesSubscription
+  extends Promise<AsyncIterator<ConversationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  startedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface MessageConnection {
+  pageInfo: PageInfo;
+  edges: MessageEdge[];
+}
+
+export interface MessageConnectionPromise
+  extends Promise<MessageConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<MessageEdge>>() => T;
+  aggregate: <T = AggregateMessagePromise>() => T;
+}
+
+export interface MessageConnectionSubscription
+  extends Promise<AsyncIterator<MessageConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<MessageEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateMessageSubscription>() => T;
 }
 
 export interface PostSubscriptionPayload {
@@ -2556,61 +2090,90 @@ export interface PostSubscriptionPayloadSubscription
   previousValues: <T = PostPreviousValuesSubscription>() => T;
 }
 
-export interface Group {
+export interface GroupEdge {
+  node: Group;
+  cursor: String;
+}
+
+export interface GroupEdgePromise extends Promise<GroupEdge>, Fragmentable {
+  node: <T = GroupPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface GroupEdgeSubscription
+  extends Promise<AsyncIterator<GroupEdge>>,
+    Fragmentable {
+  node: <T = GroupSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface GroupSubscriptionPayload {
+  mutation: MutationType;
+  node: Group;
+  updatedFields: String[];
+  previousValues: GroupPreviousValues;
+}
+
+export interface GroupSubscriptionPayloadPromise
+  extends Promise<GroupSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = GroupPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = GroupPreviousValuesPromise>() => T;
+}
+
+export interface GroupSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<GroupSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = GroupSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = GroupPreviousValuesSubscription>() => T;
+}
+
+export interface UserSubscriptionPayload {
+  mutation: MutationType;
+  node: User;
+  updatedFields: String[];
+  previousValues: UserPreviousValues;
+}
+
+export interface UserSubscriptionPayloadPromise
+  extends Promise<UserSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = UserPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserPreviousValuesPromise>() => T;
+}
+
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserPreviousValuesSubscription>() => T;
+}
+
+export interface GroupPreviousValues {
   id: ID_Output;
   name?: String;
 }
 
-export interface GroupPromise extends Promise<Group>, Fragmentable {
+export interface GroupPreviousValuesPromise
+  extends Promise<GroupPreviousValues>,
+    Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
-  conversation: <T = FragmentableArray<Conversation>>(args?: {
-    where?: ConversationWhereInput;
-    orderBy?: ConversationOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
 }
 
-export interface GroupSubscription
-  extends Promise<AsyncIterator<Group>>,
+export interface GroupPreviousValuesSubscription
+  extends Promise<AsyncIterator<GroupPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
-  conversation: <T = Promise<AsyncIterator<ConversationSubscription>>>(args?: {
-    where?: ConversationWhereInput;
-    orderBy?: ConversationOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-}
-
-export interface NotificationPreviousValues {
-  id: ID_Output;
-  type: Int;
-  title?: String;
-}
-
-export interface NotificationPreviousValuesPromise
-  extends Promise<NotificationPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  type: () => Promise<Int>;
-  title: () => Promise<String>;
-}
-
-export interface NotificationPreviousValuesSubscription
-  extends Promise<AsyncIterator<NotificationPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  type: () => Promise<AsyncIterator<Int>>;
-  title: () => Promise<AsyncIterator<String>>;
 }
 
 export interface User {
@@ -2649,9 +2212,9 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  user2: <T = FragmentableArray<User2>>(args?: {
-    where?: User2WhereInput;
-    orderBy?: User2OrderByInput;
+  conversation: <T = FragmentableArray<Conversation>>(args?: {
+    where?: ConversationWhereInput;
+    orderBy?: ConversationOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -2688,15 +2251,108 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  user2: <T = Promise<AsyncIterator<User2Subscription>>>(args?: {
-    where?: User2WhereInput;
-    orderBy?: User2OrderByInput;
+  conversation: <T = Promise<AsyncIterator<ConversationSubscription>>>(args?: {
+    where?: ConversationWhereInput;
+    orderBy?: ConversationOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
   }) => T;
+}
+
+export interface Group {
+  id: ID_Output;
+  name?: String;
+}
+
+export interface GroupPromise extends Promise<Group>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  conversation: <T = FragmentableArray<Conversation>>(args?: {
+    where?: ConversationWhereInput;
+    orderBy?: ConversationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface GroupSubscription
+  extends Promise<AsyncIterator<Group>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  conversation: <T = Promise<AsyncIterator<ConversationSubscription>>>(args?: {
+    where?: ConversationWhereInput;
+    orderBy?: ConversationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface AggregateNotification {
+  count: Int;
+}
+
+export interface AggregateNotificationPromise
+  extends Promise<AggregateNotification>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateNotificationSubscription
+  extends Promise<AsyncIterator<AggregateNotification>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface MessageSubscriptionPayload {
+  mutation: MutationType;
+  node: Message;
+  updatedFields: String[];
+  previousValues: MessagePreviousValues;
+}
+
+export interface MessageSubscriptionPayloadPromise
+  extends Promise<MessageSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = MessagePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = MessagePreviousValuesPromise>() => T;
+}
+
+export interface MessageSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<MessageSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = MessageSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = MessagePreviousValuesSubscription>() => T;
+}
+
+export interface MessageEdge {
+  node: Message;
+  cursor: String;
+}
+
+export interface MessageEdgePromise extends Promise<MessageEdge>, Fragmentable {
+  node: <T = MessagePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface MessageEdgeSubscription
+  extends Promise<AsyncIterator<MessageEdge>>,
+    Fragmentable {
+  node: <T = MessageSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface GroupConnection {
@@ -2720,61 +2376,194 @@ export interface GroupConnectionSubscription
   aggregate: <T = AggregateGroupSubscription>() => T;
 }
 
-export interface MessageEdge {
-  node: Message;
+export interface NotificationPreviousValues {
+  id: ID_Output;
+  type: Int;
+  title?: String;
+}
+
+export interface NotificationPreviousValuesPromise
+  extends Promise<NotificationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<Int>;
+  title: () => Promise<String>;
+}
+
+export interface NotificationPreviousValuesSubscription
+  extends Promise<AsyncIterator<NotificationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<Int>>;
+  title: () => Promise<AsyncIterator<String>>;
+}
+
+export interface NotificationSubscriptionPayload {
+  mutation: MutationType;
+  node: Notification;
+  updatedFields: String[];
+  previousValues: NotificationPreviousValues;
+}
+
+export interface NotificationSubscriptionPayloadPromise
+  extends Promise<NotificationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = NotificationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = NotificationPreviousValuesPromise>() => T;
+}
+
+export interface NotificationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<NotificationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = NotificationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = NotificationPreviousValuesSubscription>() => T;
+}
+
+export interface Notification {
+  id: ID_Output;
+  type: Int;
+  title?: String;
+}
+
+export interface NotificationPromise
+  extends Promise<Notification>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<Int>;
+  title: () => Promise<String>;
+  user: <T = UserPromise>() => T;
+}
+
+export interface NotificationSubscription
+  extends Promise<AsyncIterator<Notification>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<Int>>;
+  title: () => Promise<AsyncIterator<String>>;
+  user: <T = UserSubscription>() => T;
+}
+
+export interface MessagePreviousValues {
+  id: ID_Output;
+  message?: String;
+  attached: String[];
+  isSeen: Boolean;
+  isDeleted: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface MessagePreviousValuesPromise
+  extends Promise<MessagePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  message: () => Promise<String>;
+  attached: () => Promise<String[]>;
+  isSeen: () => Promise<Boolean>;
+  isDeleted: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface MessagePreviousValuesSubscription
+  extends Promise<AsyncIterator<MessagePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  message: () => Promise<AsyncIterator<String>>;
+  attached: () => Promise<AsyncIterator<String[]>>;
+  isSeen: () => Promise<AsyncIterator<Boolean>>;
+  isDeleted: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface UserEdge {
+  node: User;
   cursor: String;
 }
 
-export interface MessageEdgePromise extends Promise<MessageEdge>, Fragmentable {
-  node: <T = MessagePromise>() => T;
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface MessageEdgeSubscription
-  extends Promise<AsyncIterator<MessageEdge>>,
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
     Fragmentable {
-  node: <T = MessageSubscription>() => T;
+  node: <T = UserSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateNotification {
+export interface AggregateGroup {
   count: Int;
 }
 
-export interface AggregateNotificationPromise
-  extends Promise<AggregateNotification>,
+export interface AggregateGroupPromise
+  extends Promise<AggregateGroup>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateNotificationSubscription
-  extends Promise<AsyncIterator<AggregateNotification>>,
+export interface AggregateGroupSubscription
+  extends Promise<AsyncIterator<AggregateGroup>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export type Long = string;
+export interface NotificationConnection {
+  pageInfo: PageInfo;
+  edges: NotificationEdge[];
+}
+
+export interface NotificationConnectionPromise
+  extends Promise<NotificationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<NotificationEdge>>() => T;
+  aggregate: <T = AggregateNotificationPromise>() => T;
+}
+
+export interface NotificationConnectionSubscription
+  extends Promise<AsyncIterator<NotificationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<NotificationEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateNotificationSubscription>() => T;
+}
+
+export interface PostEdge {
+  node: Post;
+  cursor: String;
+}
+
+export interface PostEdgePromise extends Promise<PostEdge>, Fragmentable {
+  node: <T = PostPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PostEdgeSubscription
+  extends Promise<AsyncIterator<PostEdge>>,
+    Fragmentable {
+  node: <T = PostSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
 
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
 */
 export type Int = number;
 
-/*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
+export type Long = string;
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
 export type ID_Input = string | number;
 export type ID_Output = string;
-
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
 
 /*
 DateTime scalar input type, allowing Date
@@ -2785,6 +2574,16 @@ export type DateTimeInput = Date | string;
 DateTime scalar output type, which is always a string
 */
 export type DateTimeOutput = string;
+
+/*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
 
 /**
  * Model Metadata
@@ -2813,10 +2612,6 @@ export const models: Model[] = [
   },
   {
     name: "User",
-    embedded: false
-  },
-  {
-    name: "User2",
     embedded: false
   }
 ];

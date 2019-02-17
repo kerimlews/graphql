@@ -1,33 +1,47 @@
 module.exports =  {
-      constructor: function(result) {
-          this.id = result.id;
-          this.name = `${result.firstName} ${result.lastName}`;
-          this.startedAt = result.startedAt;
-          this.logo = null;
-          this.isActive = result.isActive;
-      },
-
-      mapConversation: function(model) {
+      mapConversations: function(result) {
         return {
-            id: model.id,
-            startedAt: model.startedAt,
-            message: model.message.message,
-            isSeen: model.message.isSeen,
-            isDeleted: model.message.isDeleted,
-            createdAt: model.message.createdAt,
-            updatedAt: model.message.updatedAt
+          id: result.id,
+          name: `${result.firstName} ${result.lastName}`,
+          startedAt: result.startedAt,
+          logo: null,
+          isActive: result.isActive,
+          message: result['0'].message,
+          attached: result['0'].attached
         };
       },
+
+      mapConversation: function(result) {
+        return {
+          id: result.id,
+          name: `${result.firstName} ${result.lastName}`,
+          startedAt: result.startedAt,
+          logo: null,
+          isActive: result.isActive,
+          message: result.message[0].message,
+          attached: result.message[0].attached
+        };
+      },
+
     fragment: function() {
           return `
             fragment UserConversation on Conversation {
                 id
                 startedAt
+                createdAt
+
+                user {
+                  id,
+                  firstName
+                  lastName,
+                  isActive
+                }
+
                 user2 {
-                    user {
-                      firstname
-                      lastName
-                    }
+                  id,
+                  firstName
+                  lastName,
+                  isActive
                 }
 
                 group {
@@ -35,9 +49,12 @@ module.exports =  {
                 }
 
                 message(orderBy: createdAt_ASC first: 1) {
+                    id
                     message
                     isSeen
+                    isDeleted
                     createdAt
+                    updatedAt
                     attached
                 }
             }

@@ -23,10 +23,6 @@ type AggregateUser {
   count: Int!
 }
 
-type AggregateUser2 {
-  count: Int!
-}
-
 type BatchPayload {
   count: Long!
 }
@@ -35,7 +31,7 @@ type Conversation {
   id: ID!
   user: User!
   group: Group
-  user2: User2
+  user2: User!
   message(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
   startedAt: DateTime!
   createdAt: DateTime!
@@ -50,13 +46,18 @@ type ConversationConnection {
 input ConversationCreateInput {
   user: UserCreateOneInput!
   group: GroupCreateOneWithoutConversationInput
-  user2: User2CreateOneInput
+  user2: UserCreateOneWithoutConversationInput!
   message: MessageCreateManyWithoutConversationInput
   startedAt: DateTime!
 }
 
 input ConversationCreateManyWithoutGroupInput {
   create: [ConversationCreateWithoutGroupInput!]
+  connect: [ConversationWhereUniqueInput!]
+}
+
+input ConversationCreateManyWithoutUser2Input {
+  create: [ConversationCreateWithoutUser2Input!]
   connect: [ConversationWhereUniqueInput!]
 }
 
@@ -67,7 +68,7 @@ input ConversationCreateOneWithoutMessageInput {
 
 input ConversationCreateWithoutGroupInput {
   user: UserCreateOneInput!
-  user2: User2CreateOneInput
+  user2: UserCreateOneWithoutConversationInput!
   message: MessageCreateManyWithoutConversationInput
   startedAt: DateTime!
 }
@@ -75,7 +76,14 @@ input ConversationCreateWithoutGroupInput {
 input ConversationCreateWithoutMessageInput {
   user: UserCreateOneInput!
   group: GroupCreateOneWithoutConversationInput
-  user2: User2CreateOneInput
+  user2: UserCreateOneWithoutConversationInput!
+  startedAt: DateTime!
+}
+
+input ConversationCreateWithoutUser2Input {
+  user: UserCreateOneInput!
+  group: GroupCreateOneWithoutConversationInput
+  message: MessageCreateManyWithoutConversationInput
   startedAt: DateTime!
 }
 
@@ -158,7 +166,7 @@ input ConversationSubscriptionWhereInput {
 input ConversationUpdateInput {
   user: UserUpdateOneRequiredInput
   group: GroupUpdateOneWithoutConversationInput
-  user2: User2UpdateOneInput
+  user2: UserUpdateOneRequiredWithoutConversationInput
   message: MessageUpdateManyWithoutConversationInput
   startedAt: DateTime
 }
@@ -182,6 +190,17 @@ input ConversationUpdateManyWithoutGroupInput {
   updateMany: [ConversationUpdateManyWithWhereNestedInput!]
 }
 
+input ConversationUpdateManyWithoutUser2Input {
+  create: [ConversationCreateWithoutUser2Input!]
+  delete: [ConversationWhereUniqueInput!]
+  connect: [ConversationWhereUniqueInput!]
+  disconnect: [ConversationWhereUniqueInput!]
+  update: [ConversationUpdateWithWhereUniqueWithoutUser2Input!]
+  upsert: [ConversationUpsertWithWhereUniqueWithoutUser2Input!]
+  deleteMany: [ConversationScalarWhereInput!]
+  updateMany: [ConversationUpdateManyWithWhereNestedInput!]
+}
+
 input ConversationUpdateManyWithWhereNestedInput {
   where: ConversationScalarWhereInput!
   data: ConversationUpdateManyDataInput!
@@ -196,7 +215,7 @@ input ConversationUpdateOneRequiredWithoutMessageInput {
 
 input ConversationUpdateWithoutGroupDataInput {
   user: UserUpdateOneRequiredInput
-  user2: User2UpdateOneInput
+  user2: UserUpdateOneRequiredWithoutConversationInput
   message: MessageUpdateManyWithoutConversationInput
   startedAt: DateTime
 }
@@ -204,13 +223,25 @@ input ConversationUpdateWithoutGroupDataInput {
 input ConversationUpdateWithoutMessageDataInput {
   user: UserUpdateOneRequiredInput
   group: GroupUpdateOneWithoutConversationInput
-  user2: User2UpdateOneInput
+  user2: UserUpdateOneRequiredWithoutConversationInput
+  startedAt: DateTime
+}
+
+input ConversationUpdateWithoutUser2DataInput {
+  user: UserUpdateOneRequiredInput
+  group: GroupUpdateOneWithoutConversationInput
+  message: MessageUpdateManyWithoutConversationInput
   startedAt: DateTime
 }
 
 input ConversationUpdateWithWhereUniqueWithoutGroupInput {
   where: ConversationWhereUniqueInput!
   data: ConversationUpdateWithoutGroupDataInput!
+}
+
+input ConversationUpdateWithWhereUniqueWithoutUser2Input {
+  where: ConversationWhereUniqueInput!
+  data: ConversationUpdateWithoutUser2DataInput!
 }
 
 input ConversationUpsertWithoutMessageInput {
@@ -222,6 +253,12 @@ input ConversationUpsertWithWhereUniqueWithoutGroupInput {
   where: ConversationWhereUniqueInput!
   update: ConversationUpdateWithoutGroupDataInput!
   create: ConversationCreateWithoutGroupInput!
+}
+
+input ConversationUpsertWithWhereUniqueWithoutUser2Input {
+  where: ConversationWhereUniqueInput!
+  update: ConversationUpdateWithoutUser2DataInput!
+  create: ConversationCreateWithoutUser2Input!
 }
 
 input ConversationWhereInput {
@@ -241,7 +278,7 @@ input ConversationWhereInput {
   id_not_ends_with: ID
   user: UserWhereInput
   group: GroupWhereInput
-  user2: User2WhereInput
+  user2: UserWhereInput
   message_every: MessageWhereInput
   message_some: MessageWhereInput
   message_none: MessageWhereInput
@@ -706,11 +743,6 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
-  createUser2(data: User2CreateInput!): User2!
-  updateUser2(data: User2UpdateInput!, where: User2WhereUniqueInput!): User2
-  upsertUser2(where: User2WhereUniqueInput!, create: User2CreateInput!, update: User2UpdateInput!): User2!
-  deleteUser2(where: User2WhereUniqueInput!): User2
-  deleteManyUser2s(where: User2WhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -1191,9 +1223,6 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-  user2(where: User2WhereUniqueInput!): User2
-  user2s(where: User2WhereInput, orderBy: User2OrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User2]!
-  user2sConnection(where: User2WhereInput, orderBy: User2OrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): User2Connection!
   node(id: ID!): Node
 }
 
@@ -1204,7 +1233,6 @@ type Subscription {
   notification(where: NotificationSubscriptionWhereInput): NotificationSubscriptionPayload
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  user2(where: User2SubscriptionWhereInput): User2SubscriptionPayload
 }
 
 type User {
@@ -1217,141 +1245,7 @@ type User {
   isActive: Boolean!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification!]
-  user2(where: User2WhereInput, orderBy: User2OrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User2!]
-}
-
-type User2 {
-  id: ID!
-  user: User!
-}
-
-type User2Connection {
-  pageInfo: PageInfo!
-  edges: [User2Edge]!
-  aggregate: AggregateUser2!
-}
-
-input User2CreateInput {
-  user: UserCreateOneWithoutUser2Input!
-}
-
-input User2CreateManyWithoutUserInput {
-  connect: [User2WhereUniqueInput!]
-}
-
-input User2CreateOneInput {
-  create: User2CreateInput
-  connect: User2WhereUniqueInput
-}
-
-type User2Edge {
-  node: User2!
-  cursor: String!
-}
-
-enum User2OrderByInput {
-  id_ASC
-  id_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type User2PreviousValues {
-  id: ID!
-}
-
-input User2ScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  AND: [User2ScalarWhereInput!]
-  OR: [User2ScalarWhereInput!]
-  NOT: [User2ScalarWhereInput!]
-}
-
-type User2SubscriptionPayload {
-  mutation: MutationType!
-  node: User2
-  updatedFields: [String!]
-  previousValues: User2PreviousValues
-}
-
-input User2SubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: User2WhereInput
-  AND: [User2SubscriptionWhereInput!]
-  OR: [User2SubscriptionWhereInput!]
-  NOT: [User2SubscriptionWhereInput!]
-}
-
-input User2UpdateDataInput {
-  user: UserUpdateOneRequiredWithoutUser2Input
-}
-
-input User2UpdateInput {
-  user: UserUpdateOneRequiredWithoutUser2Input
-}
-
-input User2UpdateManyWithoutUserInput {
-  delete: [User2WhereUniqueInput!]
-  connect: [User2WhereUniqueInput!]
-  disconnect: [User2WhereUniqueInput!]
-  deleteMany: [User2ScalarWhereInput!]
-}
-
-input User2UpdateOneInput {
-  create: User2CreateInput
-  update: User2UpdateDataInput
-  upsert: User2UpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: User2WhereUniqueInput
-}
-
-input User2UpsertNestedInput {
-  update: User2UpdateDataInput!
-  create: User2CreateInput!
-}
-
-input User2WhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  user: UserWhereInput
-  AND: [User2WhereInput!]
-  OR: [User2WhereInput!]
-  NOT: [User2WhereInput!]
-}
-
-input User2WhereUniqueInput {
-  id: ID
+  conversation(where: ConversationWhereInput, orderBy: ConversationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Conversation!]
 }
 
 type UserConnection {
@@ -1369,11 +1263,16 @@ input UserCreateInput {
   isActive: Boolean
   posts: PostCreateManyWithoutAuthorInput
   notifications: NotificationCreateManyWithoutUserInput
-  user2: User2CreateManyWithoutUserInput
+  conversation: ConversationCreateManyWithoutUser2Input
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutConversationInput {
+  create: UserCreateWithoutConversationInput
   connect: UserWhereUniqueInput
 }
 
@@ -1387,9 +1286,15 @@ input UserCreateOneWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutUser2Input {
-  create: UserCreateWithoutUser2Input
-  connect: UserWhereUniqueInput
+input UserCreateWithoutConversationInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  username: String!
+  isActive: Boolean
+  posts: PostCreateManyWithoutAuthorInput
+  notifications: NotificationCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutNotificationsInput {
@@ -1400,7 +1305,7 @@ input UserCreateWithoutNotificationsInput {
   username: String!
   isActive: Boolean
   posts: PostCreateManyWithoutAuthorInput
-  user2: User2CreateManyWithoutUserInput
+  conversation: ConversationCreateManyWithoutUser2Input
 }
 
 input UserCreateWithoutPostsInput {
@@ -1411,18 +1316,7 @@ input UserCreateWithoutPostsInput {
   username: String!
   isActive: Boolean
   notifications: NotificationCreateManyWithoutUserInput
-  user2: User2CreateManyWithoutUserInput
-}
-
-input UserCreateWithoutUser2Input {
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String!
-  username: String!
-  isActive: Boolean
-  posts: PostCreateManyWithoutAuthorInput
-  notifications: NotificationCreateManyWithoutUserInput
+  conversation: ConversationCreateManyWithoutUser2Input
 }
 
 type UserEdge {
@@ -1488,7 +1382,7 @@ input UserUpdateDataInput {
   isActive: Boolean
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
-  user2: User2UpdateManyWithoutUserInput
+  conversation: ConversationUpdateManyWithoutUser2Input
 }
 
 input UserUpdateInput {
@@ -1500,7 +1394,7 @@ input UserUpdateInput {
   isActive: Boolean
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
-  user2: User2UpdateManyWithoutUserInput
+  conversation: ConversationUpdateManyWithoutUser2Input
 }
 
 input UserUpdateManyMutationInput {
@@ -1519,6 +1413,13 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutConversationInput {
+  create: UserCreateWithoutConversationInput
+  update: UserUpdateWithoutConversationDataInput
+  upsert: UserUpsertWithoutConversationInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateOneRequiredWithoutNotificationsInput {
   create: UserCreateWithoutNotificationsInput
   update: UserUpdateWithoutNotificationsDataInput
@@ -1533,11 +1434,15 @@ input UserUpdateOneRequiredWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateOneRequiredWithoutUser2Input {
-  create: UserCreateWithoutUser2Input
-  update: UserUpdateWithoutUser2DataInput
-  upsert: UserUpsertWithoutUser2Input
-  connect: UserWhereUniqueInput
+input UserUpdateWithoutConversationDataInput {
+  firstName: String
+  lastName: String
+  email: String
+  password: String
+  username: String
+  isActive: Boolean
+  posts: PostUpdateManyWithoutAuthorInput
+  notifications: NotificationUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutNotificationsDataInput {
@@ -1548,7 +1453,7 @@ input UserUpdateWithoutNotificationsDataInput {
   username: String
   isActive: Boolean
   posts: PostUpdateManyWithoutAuthorInput
-  user2: User2UpdateManyWithoutUserInput
+  conversation: ConversationUpdateManyWithoutUser2Input
 }
 
 input UserUpdateWithoutPostsDataInput {
@@ -1559,23 +1464,17 @@ input UserUpdateWithoutPostsDataInput {
   username: String
   isActive: Boolean
   notifications: NotificationUpdateManyWithoutUserInput
-  user2: User2UpdateManyWithoutUserInput
-}
-
-input UserUpdateWithoutUser2DataInput {
-  firstName: String
-  lastName: String
-  email: String
-  password: String
-  username: String
-  isActive: Boolean
-  posts: PostUpdateManyWithoutAuthorInput
-  notifications: NotificationUpdateManyWithoutUserInput
+  conversation: ConversationUpdateManyWithoutUser2Input
 }
 
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutConversationInput {
+  update: UserUpdateWithoutConversationDataInput!
+  create: UserCreateWithoutConversationInput!
 }
 
 input UserUpsertWithoutNotificationsInput {
@@ -1586,11 +1485,6 @@ input UserUpsertWithoutNotificationsInput {
 input UserUpsertWithoutPostsInput {
   update: UserUpdateWithoutPostsDataInput!
   create: UserCreateWithoutPostsInput!
-}
-
-input UserUpsertWithoutUser2Input {
-  update: UserUpdateWithoutUser2DataInput!
-  create: UserCreateWithoutUser2Input!
 }
 
 input UserWhereInput {
@@ -1686,9 +1580,9 @@ input UserWhereInput {
   notifications_every: NotificationWhereInput
   notifications_some: NotificationWhereInput
   notifications_none: NotificationWhereInput
-  user2_every: User2WhereInput
-  user2_some: User2WhereInput
-  user2_none: User2WhereInput
+  conversation_every: ConversationWhereInput
+  conversation_some: ConversationWhereInput
+  conversation_none: ConversationWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

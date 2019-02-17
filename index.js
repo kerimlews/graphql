@@ -9,11 +9,10 @@ const ConversationModel = require('./Api/Models/ConversationModel');
 const resolvers = {
   Query: {
     checkToken(root, args, context) {
-      console.log('conext', context.user)
       if (context.user == null)
         return null;
-      const { username, email } = context.user;
-      return { username, email };
+      
+      return { username, email, firstName, lastName } = context.user;
     },
     findUsers(root, args, context) {
       return prisma.users()
@@ -39,33 +38,51 @@ const resolvers = {
       
       const { page, search } = args;
 
-      var query = {
+      const id = context.user.id;
+
+      const query = {
         first: 10,
-        skip: ( page - 1 ) * 10
+        skip: ( page - 1 ) * 10,
+        where: {
+          OR: [
+            { user2: { id } },
+            { user: { id } }
+          ]
+        }
       }
 
-      if (search != null)
-        query = { ...query, where: { 
+      if (search != null && search != '')
+        query = { ...query, where: {
+            ...query.where,
             user2: {
-              user: {
-                OR: [{
-                  firstName_contains: search,
-                }, {
-                  lastName_contains:  search,
-                }]
-              }
-            }  
+              OR: [{
+                firstName_contains: search,
+              }, {
+                lastName_contains:  search,
+              }]
+            }
          }
         };
    
+
       const conversations = await prisma.conversations(query)
         .$fragment(ConversationModel.fragment());
 
-      await console.log(conversations);
+      if (conversations.length === 0) return [];
+ 
+      const result = conversations.map((c) => {
+        const userId = context.user.id;
+        const { id, startedAt, user, user2, group, message } = c;
+        let userFrom = null;
 
-      const { id, startedAt, user2: { user: { firstName, lastName } }, group: { name }, message: { message, isSeen, createdAt } } = conversations;
-      
-      const result = new ConversationModel({ startedAt, id, firstName, lastName, name, message, isSeen, createdAt  });
+        if(user2.id === userId)
+          userFrom = user;
+        else userFrom = user2;
+        delete userFrom.id;
+
+        return ConversationModel.mapConversations({ startedAt, id, ...userFrom, ...group, ...message  });
+      });
+
       return result;
     },
     async getConversation(root, args, context) {
@@ -75,12 +92,12 @@ const resolvers = {
       
       const { id, page } = args;
 
-      var query = {
+      const query = {
         first: 20,
         skip: ( page - 1 ) * 10
       }
-   
-      const result = await prisma.conversation({id})
+  
+      const result = await prisma.conversation({ id })
         .message(query);
 
       await console.log(result);
@@ -89,36 +106,39 @@ const resolvers = {
     },
   },
   Subscription: {
-    addMessage: {
-        subscribe: async (parent, args, ctx, info) => prisma.$subscribe.message({
-          where: {
-            mutation_in: ['CREATED', 'UPDATED']
-          },
-        }, info).node(),
+    message: {
+        subscribe: async (parent, args, ctx) => prisma.$subscribe.message().node(),
         resolve: payload => payload
       }
   },
   Mutation: {
     async addConversation(root, args, context) {
-
+      const { user2, message } = args;
+      
       if(context.user == null)
         throw new Error("User not found");
       
-      const { user2, message } = args;
+      const existConversation = await prisma.$exists.conversation({
+        AND: [
+          { user: { id: context.user.id } },
+          { user2: { id: user2 } },
+        ]
+      });
+
+      if(existConversation)
+        throw new Error("Conversation already exist");
 
       var conversation = {
         user: { connect: { id: context.user.id } },
-        user2: { create: { user: { connect: { id: user2 } } } },
-        startedAt: Date.now(),
-        createdAt: Date.now(),
+        user2: { connect: { id: user2 } },
+        startedAt: new Date(),
         message: { create: [{
-          message,
-          createdAt: Date.now()
+          message
         }] },
-      }
-   
-      const conversation = await prisma.createConversation(conversation)
-        .$fragment(ConversationModel.fragmentConversation())
+      };
+
+      conversation = await prisma.createConversation(conversation)
+        .$fragment(ConversationModel.fragment())
 
       const result = ConversationModel.mapConversation(conversation)
       
@@ -141,7 +161,6 @@ const resolvers = {
       const result = await prisma.createMessage(msg);
       
       return result;
-
     },
     async login(root, args, context) {
       const { email, password } = args;
@@ -168,6 +187,8 @@ const resolvers = {
 
       return {
         username,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email,
         token: jwt.sign({ username, password }, 'mysecret')
       } 
@@ -184,23 +205,28 @@ const resolvers = {
     },
     async registration(root, args, context) {
       const { username, password, email, firstName, lastName } = args;
-      const emailExist = await prisma.user({ email });
-      if (emailExist)
-        throw new Error('Email aready exist')
 
-      var salt = await bcrypt.genSaltSync(10);
-      var hash = await bcrypt.hashSync(password, salt);
+      const existUser = await prisma.$exists.user({ username, email });
 
-      await prisma.createUser({ username, password: hash, email })
-    
-      return {
+      if (existUser)
+        throw new Error('Email or username aready exists')
+
+      const salt = await bcrypt.genSaltSync(10);
+      const hash = await bcrypt.hashSync(password, salt);
+
+      await prisma.createUser({ username, firstName, lastName, password: hash, email })
+      
+      const token = jwt.sign({ username, password }, 'mysecret');
+
+      const response = {
+        username,
         firstName,
         lastName,
-        username,
         email,
-        token: jwt.sign({ username, password }, 'mysecret')
-      } 
+        token
+      };
 
+      return response;
     },
     createDraft(root, args, context) {
       return prisma.createPost(
@@ -212,7 +238,6 @@ const resolvers = {
             }
           },
         },
-
       )
     },
     publish(root, args, context) {
@@ -248,6 +273,7 @@ const resolvers = {
 }
 
 async function getUser(token) {
+  console.log(token)
   if (token === 'null' || token == null)
     return null;
 

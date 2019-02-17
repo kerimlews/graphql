@@ -8,12 +8,7 @@ type User {
   isActive: Boolean! @default(value: "false")
   posts: [Post!]
   notifications: [Notification!]
-  user2: [User2!]
-}
-
-type User2 {
-    id: ID! @unique
-    user: User!
+  conversation: [Conversation!] @relation(name: "RelationConversation")
 }
 
 type Message {
@@ -29,9 +24,9 @@ type Message {
 
 type Conversation {
    id: ID! @unique
-   user: User!
+   user: User! @relation(name: "Sender")
    group: Group
-   user2: User2
+   user2: User! @relation(name: "RelationConversation")
    message: [Message!]
    startedAt: DateTime!
    createdAt: DateTime!
