@@ -375,6 +375,8 @@ export type UserOrderByInput =
   | "password_DESC"
   | "username_ASC"
   | "username_DESC"
+  | "expoToken_ASC"
+  | "expoToken_DESC"
   | "isActive_ASC"
   | "isActive_DESC"
   | "createdAt_ASC"
@@ -399,6 +401,7 @@ export interface UserCreateWithoutConversationInput {
   email: String;
   password: String;
   username: String;
+  expoToken?: String;
   isActive?: Boolean;
   posts?: PostCreateManyWithoutAuthorInput;
   notifications?: NotificationCreateManyWithoutUserInput;
@@ -494,6 +497,7 @@ export interface UserUpdateDataInput {
   email?: String;
   password?: String;
   username?: String;
+  expoToken?: String;
   isActive?: Boolean;
   posts?: PostUpdateManyWithoutAuthorInput;
   notifications?: NotificationUpdateManyWithoutUserInput;
@@ -645,6 +649,20 @@ export interface UserWhereInput {
   username_not_starts_with?: String;
   username_ends_with?: String;
   username_not_ends_with?: String;
+  expoToken?: String;
+  expoToken_not?: String;
+  expoToken_in?: String[] | String;
+  expoToken_not_in?: String[] | String;
+  expoToken_lt?: String;
+  expoToken_lte?: String;
+  expoToken_gt?: String;
+  expoToken_gte?: String;
+  expoToken_contains?: String;
+  expoToken_not_contains?: String;
+  expoToken_starts_with?: String;
+  expoToken_not_starts_with?: String;
+  expoToken_ends_with?: String;
+  expoToken_not_ends_with?: String;
   isActive?: Boolean;
   isActive_not?: Boolean;
   posts_every?: PostWhereInput;
@@ -746,6 +764,7 @@ export interface UserUpdateManyMutationInput {
   email?: String;
   password?: String;
   username?: String;
+  expoToken?: String;
   isActive?: Boolean;
 }
 
@@ -852,6 +871,7 @@ export interface UserCreateWithoutPostsInput {
   email: String;
   password: String;
   username: String;
+  expoToken?: String;
   isActive?: Boolean;
   notifications?: NotificationCreateManyWithoutUserInput;
   conversation?: ConversationCreateManyWithoutUser2Input;
@@ -1258,6 +1278,7 @@ export interface UserUpdateInput {
   email?: String;
   password?: String;
   username?: String;
+  expoToken?: String;
   isActive?: Boolean;
   posts?: PostUpdateManyWithoutAuthorInput;
   notifications?: NotificationUpdateManyWithoutUserInput;
@@ -1277,6 +1298,7 @@ export interface UserUpdateWithoutPostsDataInput {
   email?: String;
   password?: String;
   username?: String;
+  expoToken?: String;
   isActive?: Boolean;
   notifications?: NotificationUpdateManyWithoutUserInput;
   conversation?: ConversationUpdateManyWithoutUser2Input;
@@ -1376,6 +1398,7 @@ export interface UserCreateInput {
   email: String;
   password: String;
   username: String;
+  expoToken?: String;
   isActive?: Boolean;
   posts?: PostCreateManyWithoutAuthorInput;
   notifications?: NotificationCreateManyWithoutUserInput;
@@ -1388,6 +1411,7 @@ export interface UserUpdateWithoutConversationDataInput {
   email?: String;
   password?: String;
   username?: String;
+  expoToken?: String;
   isActive?: Boolean;
   posts?: PostUpdateManyWithoutAuthorInput;
   notifications?: NotificationUpdateManyWithoutUserInput;
@@ -1478,6 +1502,7 @@ export interface UserCreateWithoutNotificationsInput {
   email: String;
   password: String;
   username: String;
+  expoToken?: String;
   isActive?: Boolean;
   posts?: PostCreateManyWithoutAuthorInput;
   conversation?: ConversationCreateManyWithoutUser2Input;
@@ -1583,6 +1608,7 @@ export interface UserUpdateWithoutNotificationsDataInput {
   email?: String;
   password?: String;
   username?: String;
+  expoToken?: String;
   isActive?: Boolean;
   posts?: PostUpdateManyWithoutAuthorInput;
   conversation?: ConversationUpdateManyWithoutUser2Input;
@@ -1636,6 +1662,7 @@ export interface UserPreviousValues {
   email: String;
   password: String;
   username: String;
+  expoToken?: String;
   isActive: Boolean;
 }
 
@@ -1648,6 +1675,7 @@ export interface UserPreviousValuesPromise
   email: () => Promise<String>;
   password: () => Promise<String>;
   username: () => Promise<String>;
+  expoToken: () => Promise<String>;
   isActive: () => Promise<Boolean>;
 }
 
@@ -1660,6 +1688,7 @@ export interface UserPreviousValuesSubscription
   email: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   username: () => Promise<AsyncIterator<String>>;
+  expoToken: () => Promise<AsyncIterator<String>>;
   isActive: () => Promise<AsyncIterator<Boolean>>;
 }
 
@@ -2183,6 +2212,7 @@ export interface User {
   email: String;
   password: String;
   username: String;
+  expoToken?: String;
   isActive: Boolean;
 }
 
@@ -2193,6 +2223,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   email: () => Promise<String>;
   password: () => Promise<String>;
   username: () => Promise<String>;
+  expoToken: () => Promise<String>;
   isActive: () => Promise<Boolean>;
   posts: <T = FragmentableArray<Post>>(args?: {
     where?: PostWhereInput;
@@ -2232,6 +2263,7 @@ export interface UserSubscription
   email: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   username: () => Promise<AsyncIterator<String>>;
+  expoToken: () => Promise<AsyncIterator<String>>;
   isActive: () => Promise<AsyncIterator<Boolean>>;
   posts: <T = Promise<AsyncIterator<PostSubscription>>>(args?: {
     where?: PostWhereInput;

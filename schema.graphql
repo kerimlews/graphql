@@ -19,10 +19,11 @@ type Mutation {
   publish(postId: ID!): Post
   addMessage(id: String!, message: String): Message!
   addConversation(user2: String!, message: String): ConversationModel
+  saveExpoToken(token: String): String
 }
 
 type Subscription {
-  message: Message
+  message(token: String!): Message
 }
 
 type ConversationModel {
@@ -52,6 +53,7 @@ type User {
   id: ID!
   firstName: String!
   lastName: String!
+  expoToken: String
   email: String! 
   password: String!
   username: String!

@@ -3,8 +3,12 @@ const { GraphQLServer, PubSub } = require('graphql-yoga')
 const { createError } = require('apollo-errors')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
+import expoNotifications from './Infrastrucure/expoNotifications';
 
 const ConversationModel = require('./Api/Models/ConversationModel');
+
+var messagesNotification = [];
+var timer = null;
 
 const resolvers = {
   Query: {
@@ -107,11 +111,42 @@ const resolvers = {
   },
   Subscription: {
     message: {
-        subscribe: async (parent, args, ctx) => prisma.$subscribe.message().node(),
+        subscribe: async (parent, args, ctx) => {
+          const { token } = args;
+          const message = await prisma.$subscribe.message().node();
+          
+          if(!message.isSeen)
+            messagesNotification = messagesNotification.push(message);
+          
+          expoNotifications(token, messagesNotification);
+
+          messagesNotification = [];
+
+          return message;
+        },
         resolve: payload => payload
       }
   },
   Mutation: {
+    async saveExpoToken(root, args, context) {
+      if(context.user == null)
+        return;
+
+      const { token } = args;
+
+      const query = {
+        data: {
+          expoToken: token
+        },
+        where: {
+          id: context.user.id
+        }
+      };
+
+      await prisma.updateUser(query);
+
+      return token;
+    },
     async addConversation(root, args, context) {
       const { user2, message } = args;
       
@@ -151,13 +186,23 @@ const resolvers = {
         throw new Error("User not found");
       
       const { id, message } = args;
+      let messages = [];
 
       const msg = {
         message,
         conversation: { connect: { id } }
       }
 
+      messages.push({
+        to: pushToken,
+        sound: 'default',
+        body: message,
+        data: { withSome: 'data' },
+      })
+
       const result = await prisma.createMessage(msg);
+
+      expoNotifications(token, messages);
 
       return result;
     },
@@ -173,23 +218,25 @@ const resolvers = {
       if(!match)
         return new Error('Password is invalid')
       
-      const username = user.username;
-
-      await prisma.updateUser({
+      const query = {
         data: {
           isActive: true
         },
         where: {
           id: user.id
         }
-      });
+      };
+
+      await prisma.updateUser(query);
+
+      const { username, firstName, lastName } = user;
 
       const token = jwt.sign({ username, password }, 'mysecret');
 
       var response = {
         username,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName,
+        lastName,
         email,
         token
       };
@@ -197,14 +244,21 @@ const resolvers = {
       return response;
     },
     async logout (root, args, context) {
-      await prisma.updateUser({
+      if (context.user == null)
+        throw new Error('User not found');
+
+      const query = {
         data: {
           isActive: false
         },
         where: {
           id: context.user.id
         }
-      });
+      };
+
+      await prisma.updateUser(query);
+
+      return true;
     },
     async registration(root, args, context) {
       const { username, password, email, firstName, lastName } = args;

@@ -1242,6 +1242,7 @@ type User {
   email: String!
   password: String!
   username: String!
+  expoToken: String
   isActive: Boolean!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification!]
@@ -1260,6 +1261,7 @@ input UserCreateInput {
   email: String!
   password: String!
   username: String!
+  expoToken: String
   isActive: Boolean
   posts: PostCreateManyWithoutAuthorInput
   notifications: NotificationCreateManyWithoutUserInput
@@ -1292,6 +1294,7 @@ input UserCreateWithoutConversationInput {
   email: String!
   password: String!
   username: String!
+  expoToken: String
   isActive: Boolean
   posts: PostCreateManyWithoutAuthorInput
   notifications: NotificationCreateManyWithoutUserInput
@@ -1303,6 +1306,7 @@ input UserCreateWithoutNotificationsInput {
   email: String!
   password: String!
   username: String!
+  expoToken: String
   isActive: Boolean
   posts: PostCreateManyWithoutAuthorInput
   conversation: ConversationCreateManyWithoutUser2Input
@@ -1314,6 +1318,7 @@ input UserCreateWithoutPostsInput {
   email: String!
   password: String!
   username: String!
+  expoToken: String
   isActive: Boolean
   notifications: NotificationCreateManyWithoutUserInput
   conversation: ConversationCreateManyWithoutUser2Input
@@ -1337,6 +1342,8 @@ enum UserOrderByInput {
   password_DESC
   username_ASC
   username_DESC
+  expoToken_ASC
+  expoToken_DESC
   isActive_ASC
   isActive_DESC
   createdAt_ASC
@@ -1352,6 +1359,7 @@ type UserPreviousValues {
   email: String!
   password: String!
   username: String!
+  expoToken: String
   isActive: Boolean!
 }
 
@@ -1379,6 +1387,7 @@ input UserUpdateDataInput {
   email: String
   password: String
   username: String
+  expoToken: String
   isActive: Boolean
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
@@ -1391,6 +1400,7 @@ input UserUpdateInput {
   email: String
   password: String
   username: String
+  expoToken: String
   isActive: Boolean
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
@@ -1403,6 +1413,7 @@ input UserUpdateManyMutationInput {
   email: String
   password: String
   username: String
+  expoToken: String
   isActive: Boolean
 }
 
@@ -1440,6 +1451,7 @@ input UserUpdateWithoutConversationDataInput {
   email: String
   password: String
   username: String
+  expoToken: String
   isActive: Boolean
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
@@ -1451,6 +1463,7 @@ input UserUpdateWithoutNotificationsDataInput {
   email: String
   password: String
   username: String
+  expoToken: String
   isActive: Boolean
   posts: PostUpdateManyWithoutAuthorInput
   conversation: ConversationUpdateManyWithoutUser2Input
@@ -1462,6 +1475,7 @@ input UserUpdateWithoutPostsDataInput {
   email: String
   password: String
   username: String
+  expoToken: String
   isActive: Boolean
   notifications: NotificationUpdateManyWithoutUserInput
   conversation: ConversationUpdateManyWithoutUser2Input
@@ -1572,6 +1586,20 @@ input UserWhereInput {
   username_not_starts_with: String
   username_ends_with: String
   username_not_ends_with: String
+  expoToken: String
+  expoToken_not: String
+  expoToken_in: [String!]
+  expoToken_not_in: [String!]
+  expoToken_lt: String
+  expoToken_lte: String
+  expoToken_gt: String
+  expoToken_gte: String
+  expoToken_contains: String
+  expoToken_not_contains: String
+  expoToken_starts_with: String
+  expoToken_not_starts_with: String
+  expoToken_ends_with: String
+  expoToken_not_ends_with: String
   isActive: Boolean
   isActive_not: Boolean
   posts_every: PostWhereInput
