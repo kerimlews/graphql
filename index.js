@@ -103,27 +103,13 @@ const resolvers = {
   
       const result = await prisma.conversation({ id })
         .message(query);
-
-      await console.log(result);
       
       return result;
     }
   },
   Subscription: {
     message: {
-        subscribe: async (parent, args, ctx) => {
-          const { token } = args;
-          const message = await prisma.$subscribe.message().node();
-          
-          if(!message.isSeen)
-            messagesNotification = messagesNotification.push(message);
-          
-          expoNotifications(token, messagesNotification);
-
-          messagesNotification = [];
-
-          return message;
-        },
+        subscribe: async (parent, args, ctx) => await prisma.$subscribe.message().node(),
         resolve: payload => payload
       }
   },
