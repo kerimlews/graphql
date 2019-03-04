@@ -179,16 +179,7 @@ const resolvers = {
         conversation: { connect: { id } }
       }
 
-      messages.push({
-        to: pushToken,
-        sound: 'default',
-        body: message,
-        data: { withSome: 'data' },
-      })
-
       const result = await prisma.createMessage(msg);
-
-      expoNotifications(token, messages);
 
       return result;
     },
