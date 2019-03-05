@@ -19,7 +19,22 @@ const resolvers = {
       return context.user;
     },
     findUsers(root, args, context) {
-      return prisma.users()
+      if(context.user == null)
+        throw new Error("User not found");
+      
+      const { page, search } = args;
+
+      const query = {
+        first: 10,
+        skip: ( page - 1 ) * 10
+      };
+
+      if (search != null || search != '')
+        query.where = { fullName_contains: search };
+      
+      const result = prisma.users(query)
+
+      return result;
     },
     findUser(root, args, context) {
       return prisma.users({ where: { id: args.id } })
@@ -56,18 +71,9 @@ const resolvers = {
       }
 
       if (search != null && search != '')
-        query = { ...query, where: {
-            ...query.where,
-            user2: {
-              OR: [{
-                firstName_contains: search,
-              }, {
-                lastName_contains:  search,
-              }]
-            }
-         }
+        query.where = {
+            user2: { fullName_contains: search }
         };
-   
 
       const conversations = await prisma.conversations(query)
         .$fragment(ConversationModel.fragment());
@@ -248,13 +254,17 @@ const resolvers = {
       const salt = await bcrypt.genSaltSync(10);
       const hash = await bcrypt.hashSync(password, salt);
 
+      const fullName = `${firstName} ${lastName}`;
+
       const user = {
         email,
         username,
         firstName,
         lastName,
+        fullName,
         password: hash,
-        isActive: true
+        isActive: true,
+        lastLogin: new Date()
       };
       
       await prisma.createUser(user);

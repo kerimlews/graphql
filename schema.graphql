@@ -1,6 +1,6 @@
 type Query {
   checkToken: User
-  findUsers: [User!]!
+  findUsers(page: Int!, search: String): [User!]!
   findUser(id: ID): User
   publishedPosts: [Post!]!
   post(postId: ID!): Post
@@ -53,11 +53,19 @@ type User {
   id: ID!
   firstName: String!
   lastName: String!
+  fullName: String!
   expoToken: String
+  currentConversationId: String
   email: String! 
   password: String!
   username: String!
+
   isActive: Boolean
+
+  lastLogin: String
+  createdAt: String
+  updatedAt: String
+
   posts: [Post!]
   notifications: [Notification!]
   conversation: [Conversation!]
@@ -87,6 +95,7 @@ type Conversation {
 type Group {
   id: ID!
   name: String
+  isOpen: Boolean
   conversation: [Conversation!]
 }
 

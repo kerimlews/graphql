@@ -1,12 +1,21 @@
 type User {
   id: ID! @unique
+
   firstName: String!
   lastName: String!
+  fullName: String!
   email: String! @unique
   password: String!
   username: String! @unique
   expoToken: String
+  currentConversationId: String
+
   isActive: Boolean! @default(value: "false")
+
+  lastLogin: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
   posts: [Post!]
   notifications: [Notification!]
   conversation: [Conversation!] @relation(name: "RelationConversation")
@@ -14,29 +23,37 @@ type User {
 
 type Message {
   id: ID! @unique
+  
   message: String
   attached: [String!]
+
   isSeen: Boolean! @default(value: "false")
   isDeleted: Boolean! @default(value: "false")
+  
   createdAt: DateTime!
   updatedAt: DateTime!
+  
   conversation: Conversation!
 }
 
 type Conversation {
-   id: ID! @unique
-   user: User! @relation(name: "Sender")
-   group: Group
-   user2: User! @relation(name: "RelationConversation")
-   message: [Message!]
-   startedAt: DateTime!
-   createdAt: DateTime!
+  id: ID! @unique
+
+  isOpen: Boolean! @default(value: "false")
+
+  startedAt: DateTime!
+  createdAt: DateTime!
+
+  user: User! @relation(name: "Sender")
+  user2: User! @relation(name: "RelationConversation")
+
+  group: Group
+  message: [Message!]
 }
 
 type Group {
   id: ID! @unique
   name: String
-  conversation: [Conversation!]
 }
 
 type Notification {

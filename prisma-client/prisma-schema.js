@@ -29,12 +29,13 @@ type BatchPayload {
 
 type Conversation {
   id: ID!
-  user: User!
-  group: Group
-  user2: User!
-  message(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  isOpen: Boolean!
   startedAt: DateTime!
   createdAt: DateTime!
+  user: User!
+  user2: User!
+  group: Group
+  message(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
 }
 
 type ConversationConnection {
@@ -44,16 +45,12 @@ type ConversationConnection {
 }
 
 input ConversationCreateInput {
-  user: UserCreateOneInput!
-  group: GroupCreateOneWithoutConversationInput
-  user2: UserCreateOneWithoutConversationInput!
-  message: MessageCreateManyWithoutConversationInput
+  isOpen: Boolean
   startedAt: DateTime!
-}
-
-input ConversationCreateManyWithoutGroupInput {
-  create: [ConversationCreateWithoutGroupInput!]
-  connect: [ConversationWhereUniqueInput!]
+  user: UserCreateOneInput!
+  user2: UserCreateOneWithoutConversationInput!
+  group: GroupCreateOneInput
+  message: MessageCreateManyWithoutConversationInput
 }
 
 input ConversationCreateManyWithoutUser2Input {
@@ -66,25 +63,20 @@ input ConversationCreateOneWithoutMessageInput {
   connect: ConversationWhereUniqueInput
 }
 
-input ConversationCreateWithoutGroupInput {
-  user: UserCreateOneInput!
-  user2: UserCreateOneWithoutConversationInput!
-  message: MessageCreateManyWithoutConversationInput
-  startedAt: DateTime!
-}
-
 input ConversationCreateWithoutMessageInput {
-  user: UserCreateOneInput!
-  group: GroupCreateOneWithoutConversationInput
-  user2: UserCreateOneWithoutConversationInput!
+  isOpen: Boolean
   startedAt: DateTime!
+  user: UserCreateOneInput!
+  user2: UserCreateOneWithoutConversationInput!
+  group: GroupCreateOneInput
 }
 
 input ConversationCreateWithoutUser2Input {
-  user: UserCreateOneInput!
-  group: GroupCreateOneWithoutConversationInput
-  message: MessageCreateManyWithoutConversationInput
+  isOpen: Boolean
   startedAt: DateTime!
+  user: UserCreateOneInput!
+  group: GroupCreateOneInput
+  message: MessageCreateManyWithoutConversationInput
 }
 
 type ConversationEdge {
@@ -95,6 +87,8 @@ type ConversationEdge {
 enum ConversationOrderByInput {
   id_ASC
   id_DESC
+  isOpen_ASC
+  isOpen_DESC
   startedAt_ASC
   startedAt_DESC
   createdAt_ASC
@@ -105,6 +99,7 @@ enum ConversationOrderByInput {
 
 type ConversationPreviousValues {
   id: ID!
+  isOpen: Boolean!
   startedAt: DateTime!
   createdAt: DateTime!
 }
@@ -124,6 +119,8 @@ input ConversationScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  isOpen: Boolean
+  isOpen_not: Boolean
   startedAt: DateTime
   startedAt_not: DateTime
   startedAt_in: [DateTime!]
@@ -164,36 +161,29 @@ input ConversationSubscriptionWhereInput {
 }
 
 input ConversationUpdateInput {
-  user: UserUpdateOneRequiredInput
-  group: GroupUpdateOneWithoutConversationInput
-  user2: UserUpdateOneRequiredWithoutConversationInput
-  message: MessageUpdateManyWithoutConversationInput
+  isOpen: Boolean
   startedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  user2: UserUpdateOneRequiredWithoutConversationInput
+  group: GroupUpdateOneInput
+  message: MessageUpdateManyWithoutConversationInput
 }
 
 input ConversationUpdateManyDataInput {
+  isOpen: Boolean
   startedAt: DateTime
 }
 
 input ConversationUpdateManyMutationInput {
+  isOpen: Boolean
   startedAt: DateTime
-}
-
-input ConversationUpdateManyWithoutGroupInput {
-  create: [ConversationCreateWithoutGroupInput!]
-  delete: [ConversationWhereUniqueInput!]
-  connect: [ConversationWhereUniqueInput!]
-  disconnect: [ConversationWhereUniqueInput!]
-  update: [ConversationUpdateWithWhereUniqueWithoutGroupInput!]
-  upsert: [ConversationUpsertWithWhereUniqueWithoutGroupInput!]
-  deleteMany: [ConversationScalarWhereInput!]
-  updateMany: [ConversationUpdateManyWithWhereNestedInput!]
 }
 
 input ConversationUpdateManyWithoutUser2Input {
   create: [ConversationCreateWithoutUser2Input!]
   delete: [ConversationWhereUniqueInput!]
   connect: [ConversationWhereUniqueInput!]
+  set: [ConversationWhereUniqueInput!]
   disconnect: [ConversationWhereUniqueInput!]
   update: [ConversationUpdateWithWhereUniqueWithoutUser2Input!]
   upsert: [ConversationUpsertWithWhereUniqueWithoutUser2Input!]
@@ -213,30 +203,20 @@ input ConversationUpdateOneRequiredWithoutMessageInput {
   connect: ConversationWhereUniqueInput
 }
 
-input ConversationUpdateWithoutGroupDataInput {
-  user: UserUpdateOneRequiredInput
-  user2: UserUpdateOneRequiredWithoutConversationInput
-  message: MessageUpdateManyWithoutConversationInput
-  startedAt: DateTime
-}
-
 input ConversationUpdateWithoutMessageDataInput {
-  user: UserUpdateOneRequiredInput
-  group: GroupUpdateOneWithoutConversationInput
-  user2: UserUpdateOneRequiredWithoutConversationInput
+  isOpen: Boolean
   startedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  user2: UserUpdateOneRequiredWithoutConversationInput
+  group: GroupUpdateOneInput
 }
 
 input ConversationUpdateWithoutUser2DataInput {
-  user: UserUpdateOneRequiredInput
-  group: GroupUpdateOneWithoutConversationInput
-  message: MessageUpdateManyWithoutConversationInput
+  isOpen: Boolean
   startedAt: DateTime
-}
-
-input ConversationUpdateWithWhereUniqueWithoutGroupInput {
-  where: ConversationWhereUniqueInput!
-  data: ConversationUpdateWithoutGroupDataInput!
+  user: UserUpdateOneRequiredInput
+  group: GroupUpdateOneInput
+  message: MessageUpdateManyWithoutConversationInput
 }
 
 input ConversationUpdateWithWhereUniqueWithoutUser2Input {
@@ -247,12 +227,6 @@ input ConversationUpdateWithWhereUniqueWithoutUser2Input {
 input ConversationUpsertWithoutMessageInput {
   update: ConversationUpdateWithoutMessageDataInput!
   create: ConversationCreateWithoutMessageInput!
-}
-
-input ConversationUpsertWithWhereUniqueWithoutGroupInput {
-  where: ConversationWhereUniqueInput!
-  update: ConversationUpdateWithoutGroupDataInput!
-  create: ConversationCreateWithoutGroupInput!
 }
 
 input ConversationUpsertWithWhereUniqueWithoutUser2Input {
@@ -276,12 +250,8 @@ input ConversationWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  user: UserWhereInput
-  group: GroupWhereInput
-  user2: UserWhereInput
-  message_every: MessageWhereInput
-  message_some: MessageWhereInput
-  message_none: MessageWhereInput
+  isOpen: Boolean
+  isOpen_not: Boolean
   startedAt: DateTime
   startedAt_not: DateTime
   startedAt_in: [DateTime!]
@@ -298,6 +268,12 @@ input ConversationWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
+  user: UserWhereInput
+  user2: UserWhereInput
+  group: GroupWhereInput
+  message_every: MessageWhereInput
+  message_some: MessageWhereInput
+  message_none: MessageWhereInput
   AND: [ConversationWhereInput!]
   OR: [ConversationWhereInput!]
   NOT: [ConversationWhereInput!]
@@ -312,7 +288,6 @@ scalar DateTime
 type Group {
   id: ID!
   name: String
-  conversation(where: ConversationWhereInput, orderBy: ConversationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Conversation!]
 }
 
 type GroupConnection {
@@ -323,16 +298,11 @@ type GroupConnection {
 
 input GroupCreateInput {
   name: String
-  conversation: ConversationCreateManyWithoutGroupInput
 }
 
-input GroupCreateOneWithoutConversationInput {
-  create: GroupCreateWithoutConversationInput
+input GroupCreateOneInput {
+  create: GroupCreateInput
   connect: GroupWhereUniqueInput
-}
-
-input GroupCreateWithoutConversationInput {
-  name: String
 }
 
 type GroupEdge {
@@ -374,31 +344,30 @@ input GroupSubscriptionWhereInput {
   NOT: [GroupSubscriptionWhereInput!]
 }
 
+input GroupUpdateDataInput {
+  name: String
+}
+
 input GroupUpdateInput {
   name: String
-  conversation: ConversationUpdateManyWithoutGroupInput
 }
 
 input GroupUpdateManyMutationInput {
   name: String
 }
 
-input GroupUpdateOneWithoutConversationInput {
-  create: GroupCreateWithoutConversationInput
-  update: GroupUpdateWithoutConversationDataInput
-  upsert: GroupUpsertWithoutConversationInput
+input GroupUpdateOneInput {
+  create: GroupCreateInput
+  update: GroupUpdateDataInput
+  upsert: GroupUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: GroupWhereUniqueInput
 }
 
-input GroupUpdateWithoutConversationDataInput {
-  name: String
-}
-
-input GroupUpsertWithoutConversationInput {
-  update: GroupUpdateWithoutConversationDataInput!
-  create: GroupCreateWithoutConversationInput!
+input GroupUpsertNestedInput {
+  update: GroupUpdateDataInput!
+  create: GroupCreateInput!
 }
 
 input GroupWhereInput {
@@ -430,9 +399,6 @@ input GroupWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  conversation_every: ConversationWhereInput
-  conversation_some: ConversationWhereInput
-  conversation_none: ConversationWhereInput
   AND: [GroupWhereInput!]
   OR: [GroupWhereInput!]
   NOT: [GroupWhereInput!]
@@ -617,6 +583,7 @@ input MessageUpdateManyWithoutConversationInput {
   create: [MessageCreateWithoutConversationInput!]
   delete: [MessageWhereUniqueInput!]
   connect: [MessageWhereUniqueInput!]
+  set: [MessageWhereUniqueInput!]
   disconnect: [MessageWhereUniqueInput!]
   update: [MessageUpdateWithWhereUniqueWithoutConversationInput!]
   upsert: [MessageUpsertWithWhereUniqueWithoutConversationInput!]
@@ -888,6 +855,7 @@ input NotificationUpdateManyWithoutUserInput {
   create: [NotificationCreateWithoutUserInput!]
   delete: [NotificationWhereUniqueInput!]
   connect: [NotificationWhereUniqueInput!]
+  set: [NotificationWhereUniqueInput!]
   disconnect: [NotificationWhereUniqueInput!]
   update: [NotificationUpdateWithWhereUniqueWithoutUserInput!]
   upsert: [NotificationUpsertWithWhereUniqueWithoutUserInput!]
@@ -1120,6 +1088,7 @@ input PostUpdateManyWithoutAuthorInput {
   create: [PostCreateWithoutAuthorInput!]
   delete: [PostWhereUniqueInput!]
   connect: [PostWhereUniqueInput!]
+  set: [PostWhereUniqueInput!]
   disconnect: [PostWhereUniqueInput!]
   update: [PostUpdateWithWhereUniqueWithoutAuthorInput!]
   upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
@@ -1239,11 +1208,16 @@ type User {
   id: ID!
   firstName: String!
   lastName: String!
+  fullName: String!
   email: String!
   password: String!
   username: String!
   expoToken: String
+  currentConversationId: String
   isActive: Boolean!
+  lastLogin: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   notifications(where: NotificationWhereInput, orderBy: NotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Notification!]
   conversation(where: ConversationWhereInput, orderBy: ConversationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Conversation!]
@@ -1258,11 +1232,14 @@ type UserConnection {
 input UserCreateInput {
   firstName: String!
   lastName: String!
+  fullName: String!
   email: String!
   password: String!
   username: String!
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime!
   posts: PostCreateManyWithoutAuthorInput
   notifications: NotificationCreateManyWithoutUserInput
   conversation: ConversationCreateManyWithoutUser2Input
@@ -1291,11 +1268,14 @@ input UserCreateOneWithoutPostsInput {
 input UserCreateWithoutConversationInput {
   firstName: String!
   lastName: String!
+  fullName: String!
   email: String!
   password: String!
   username: String!
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime!
   posts: PostCreateManyWithoutAuthorInput
   notifications: NotificationCreateManyWithoutUserInput
 }
@@ -1303,11 +1283,14 @@ input UserCreateWithoutConversationInput {
 input UserCreateWithoutNotificationsInput {
   firstName: String!
   lastName: String!
+  fullName: String!
   email: String!
   password: String!
   username: String!
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime!
   posts: PostCreateManyWithoutAuthorInput
   conversation: ConversationCreateManyWithoutUser2Input
 }
@@ -1315,11 +1298,14 @@ input UserCreateWithoutNotificationsInput {
 input UserCreateWithoutPostsInput {
   firstName: String!
   lastName: String!
+  fullName: String!
   email: String!
   password: String!
   username: String!
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime!
   notifications: NotificationCreateManyWithoutUserInput
   conversation: ConversationCreateManyWithoutUser2Input
 }
@@ -1336,6 +1322,8 @@ enum UserOrderByInput {
   firstName_DESC
   lastName_ASC
   lastName_DESC
+  fullName_ASC
+  fullName_DESC
   email_ASC
   email_DESC
   password_ASC
@@ -1344,8 +1332,12 @@ enum UserOrderByInput {
   username_DESC
   expoToken_ASC
   expoToken_DESC
+  currentConversationId_ASC
+  currentConversationId_DESC
   isActive_ASC
   isActive_DESC
+  lastLogin_ASC
+  lastLogin_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -1356,11 +1348,16 @@ type UserPreviousValues {
   id: ID!
   firstName: String!
   lastName: String!
+  fullName: String!
   email: String!
   password: String!
   username: String!
   expoToken: String
+  currentConversationId: String
   isActive: Boolean!
+  lastLogin: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type UserSubscriptionPayload {
@@ -1384,11 +1381,14 @@ input UserSubscriptionWhereInput {
 input UserUpdateDataInput {
   firstName: String
   lastName: String
+  fullName: String
   email: String
   password: String
   username: String
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
   conversation: ConversationUpdateManyWithoutUser2Input
@@ -1397,11 +1397,14 @@ input UserUpdateDataInput {
 input UserUpdateInput {
   firstName: String
   lastName: String
+  fullName: String
   email: String
   password: String
   username: String
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
   conversation: ConversationUpdateManyWithoutUser2Input
@@ -1410,11 +1413,14 @@ input UserUpdateInput {
 input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
+  fullName: String
   email: String
   password: String
   username: String
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime
 }
 
 input UserUpdateOneRequiredInput {
@@ -1448,11 +1454,14 @@ input UserUpdateOneRequiredWithoutPostsInput {
 input UserUpdateWithoutConversationDataInput {
   firstName: String
   lastName: String
+  fullName: String
   email: String
   password: String
   username: String
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime
   posts: PostUpdateManyWithoutAuthorInput
   notifications: NotificationUpdateManyWithoutUserInput
 }
@@ -1460,11 +1469,14 @@ input UserUpdateWithoutConversationDataInput {
 input UserUpdateWithoutNotificationsDataInput {
   firstName: String
   lastName: String
+  fullName: String
   email: String
   password: String
   username: String
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime
   posts: PostUpdateManyWithoutAuthorInput
   conversation: ConversationUpdateManyWithoutUser2Input
 }
@@ -1472,11 +1484,14 @@ input UserUpdateWithoutNotificationsDataInput {
 input UserUpdateWithoutPostsDataInput {
   firstName: String
   lastName: String
+  fullName: String
   email: String
   password: String
   username: String
   expoToken: String
+  currentConversationId: String
   isActive: Boolean
+  lastLogin: DateTime
   notifications: NotificationUpdateManyWithoutUserInput
   conversation: ConversationUpdateManyWithoutUser2Input
 }
@@ -1544,6 +1559,20 @@ input UserWhereInput {
   lastName_not_starts_with: String
   lastName_ends_with: String
   lastName_not_ends_with: String
+  fullName: String
+  fullName_not: String
+  fullName_in: [String!]
+  fullName_not_in: [String!]
+  fullName_lt: String
+  fullName_lte: String
+  fullName_gt: String
+  fullName_gte: String
+  fullName_contains: String
+  fullName_not_contains: String
+  fullName_starts_with: String
+  fullName_not_starts_with: String
+  fullName_ends_with: String
+  fullName_not_ends_with: String
   email: String
   email_not: String
   email_in: [String!]
@@ -1600,8 +1629,46 @@ input UserWhereInput {
   expoToken_not_starts_with: String
   expoToken_ends_with: String
   expoToken_not_ends_with: String
+  currentConversationId: String
+  currentConversationId_not: String
+  currentConversationId_in: [String!]
+  currentConversationId_not_in: [String!]
+  currentConversationId_lt: String
+  currentConversationId_lte: String
+  currentConversationId_gt: String
+  currentConversationId_gte: String
+  currentConversationId_contains: String
+  currentConversationId_not_contains: String
+  currentConversationId_starts_with: String
+  currentConversationId_not_starts_with: String
+  currentConversationId_ends_with: String
+  currentConversationId_not_ends_with: String
   isActive: Boolean
   isActive_not: Boolean
+  lastLogin: DateTime
+  lastLogin_not: DateTime
+  lastLogin_in: [DateTime!]
+  lastLogin_not_in: [DateTime!]
+  lastLogin_lt: DateTime
+  lastLogin_lte: DateTime
+  lastLogin_gt: DateTime
+  lastLogin_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   posts_every: PostWhereInput
   posts_some: PostWhereInput
   posts_none: PostWhereInput
