@@ -37,7 +37,7 @@ const resolvers = {
       return result;
     },
     findUser(root, args, context) {
-      return prisma.users({ where: { id: args.id } })
+      return prisma.user({ id: args.id });
     },
     publishedPosts(root, args, context) {
       return prisma.posts({ where: { published: true } })
