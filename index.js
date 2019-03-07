@@ -18,7 +18,7 @@ const resolvers = {
       
       return context.user;
     },
-    findUsers(root, args, context) {
+    async findUsers(root, args, context) {
       if(context.user == null)
         throw new Error("User not found");
       
@@ -32,12 +32,19 @@ const resolvers = {
       if (search != null || search != '')
         query.where = { fullName_contains: search };
       
-      const result = prisma.users(query)
+      const result = await prisma.users(query);
 
       return result;
     },
-    findUser(root, args, context) {
-      return prisma.user({ id: args.id });
+    async findUser(root, args, context) {
+      if(context.user == null)
+        throw new Error("User not found");
+      
+      const query = { id: args.id };
+
+      const result = await prisma.user(query);
+
+      return result;
     },
     publishedPosts(root, args, context) {
       return prisma.posts({ where: { published: true } })
@@ -78,7 +85,7 @@ const resolvers = {
       const conversations = await prisma.conversations(query)
         .$fragment(ConversationModel.fragment());
 
-      if (conversations.length === 0) return [];
+        if (conversations.length === 0) return [];
  
       const result = conversations.map((c) => {
         const userId = context.user.id;
@@ -141,7 +148,7 @@ const resolvers = {
     },
     async addConversation(root, args, context) {
       const { user2, message } = args;
-      
+
       if(context.user == null)
         throw new Error("User not found");
       
@@ -155,7 +162,7 @@ const resolvers = {
       if(existConversation)
         throw new Error("Conversation already exist");
 
-      var conversation = {
+      let conversation = {
         user: { connect: { id: context.user.id } },
         user2: { connect: { id: user2 } },
         startedAt: new Date(),
@@ -178,12 +185,11 @@ const resolvers = {
         throw new Error("User not found");
       
       const { id, message } = args;
-      let messages = [];
 
       const msg = {
         message,
         conversation: { connect: { id } }
-      }
+      };
 
       const result = await prisma.createMessage(msg);
 
@@ -216,7 +222,7 @@ const resolvers = {
 
       const token = jwt.sign({ username, password }, 'mysecret');
 
-      var response = {
+      const response = {
         username,
         firstName,
         lastName,

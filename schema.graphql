@@ -1,7 +1,7 @@
 type Query {
   checkToken: User
   findUsers(page: Int!, search: String): [User!]!
-  findUser(id: ID): User
+  findUser(id: String!): User!
   publishedPosts: [Post!]!
   post(postId: ID!): Post
   postsByUser(userId: ID!): [Post!]!
