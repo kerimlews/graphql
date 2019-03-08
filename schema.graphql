@@ -24,6 +24,15 @@ type Mutation {
 
 type Subscription {
   message: Message
+  user2(id: String!): User
+  conversation: ConversationUser2Model
+}
+
+type ConversationUser2Model {
+  id: ID!
+  fullname: String!
+  currentConversationId: String
+  isActive: Boolean!
 }
 
 type ConversationModel {
@@ -34,11 +43,6 @@ type ConversationModel {
   logo: String
   isActive: Boolean!
   attached: [String]
-}
-
-type Subscription {
-  postAdded: Post
-  addMessage: Message!
 }
 
 type AuthPayload {

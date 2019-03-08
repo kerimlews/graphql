@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 import expoNotifications from './Infrastrucure/expoNotifications';
 
 const ConversationModel = require('./Api/Models/ConversationModel');
+const UserModel = require('./Api/Models/UserModel');
 
 var messagesNotification = [];
 var timer = null;
@@ -122,9 +123,22 @@ const resolvers = {
   },
   Subscription: {
     message: {
-        subscribe: async (parent, args, ctx) => await prisma.$subscribe.message().node(),
+        subscribe: async (parent, args, ctx) =>
+          await prisma.$subscribe.message().node(),
         resolve: payload => payload
-      }
+    },
+    user2: {
+      subscribe: async (parent, args, ctx) =>
+        await prisma.$subscribe.user({ id: args.id }).node()
+          .$fragment(UserModel.fragment()),
+      resolve: payload => payload
+    },
+    conversation: {
+      subscribe: async (parent, args, ctx) =>
+        await prisma.$subscribe.conversation().node()
+          .$fragment(UserModel.fragment()),
+      resolve: payload => payload
+    }
   },
   Mutation: {
     async saveExpoToken(root, args, context) {
@@ -184,7 +198,7 @@ const resolvers = {
       if(context.user == null)
         throw new Error("User not found");
       
-      const { id, message } = args;
+      const { id, message, isSeen } = args;
 
       const msg = {
         message,
@@ -209,7 +223,9 @@ const resolvers = {
       
       const query = {
         data: {
-          isActive: true
+          isActive: true,
+          lastLogin: new Date(),
+          currentConversationId: null
         },
         where: {
           id: user.id
@@ -238,7 +254,8 @@ const resolvers = {
 
       const query = {
         data: {
-          isActive: false
+          isActive: false,
+          currentConversationId: null
         },
         where: {
           id: context.user.id
