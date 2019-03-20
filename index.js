@@ -119,6 +119,34 @@ const resolvers = {
         .message(query);
       
       return result;
+    },
+    async unReadedMeessage(root, args, context) {
+      
+      if(context.user == null)
+        throw new Error("User not found");
+    
+      const id = context.user.id;
+
+      const query = {
+        where: {
+          isSeen: false,
+          conversation: {
+            OR: [
+              {
+                user: { id },
+                user2: { id }
+              }
+            ]
+          }
+        }
+      };
+
+      const result = await prisma
+        .messagesConnection(query)
+        .aggregate()
+        .count();
+      
+      return result;
     }
   },
   Subscription: {
