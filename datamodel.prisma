@@ -59,8 +59,9 @@ type Group {
 type Notification {
   id: ID! @unique
   type: Int!
-  title: String
   user: User!
+  sendTo: [User!]
+  createdAt: DateTime!
 }
 
 type Post {
