@@ -59,8 +59,8 @@ type Group {
 type Notification {
   id: ID! @unique
   type: Int!
-  user: User!
-  sendTo: [User!]
+  user: User! @relation(name: "Sender")
+  user2: User2! @relation(name: "SendTo")
   createdAt: DateTime!
 }
 
