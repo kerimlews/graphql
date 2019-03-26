@@ -19,6 +19,14 @@ type User {
   posts: [Post!]
   notifications: [Notification!]
   conversation: [Conversation!] @relation(name: "RelationConversation")
+  followers: [Follower!] @relation (name: "UserWhoFollow")
+}
+
+type Follower {
+  id: ID! @unique
+
+  user: User! @relation (name: "UserFollower")
+  user2: User! @relation (name: "UserWhoFollow")
 }
 
 type Message {
